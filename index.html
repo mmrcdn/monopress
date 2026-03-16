@@ -11,9 +11,7 @@
             /* ── Google Fonts ── */
             @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
-            /* ════════════════════════════════════════════════
-           Design tokens — Light (default)
-        ════════════════════════════════════════════════ */
+            /* ── Light theme ── */
             :root {
                 --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -106,9 +104,7 @@
                 margin: 0;
             }
 
-            /* ════════════════════════════════════════════════
-           App shell
-        ════════════════════════════════════════════════ */
+            /* App shell */
             .app {
                 display: flex;
                 height: 100vh;
@@ -116,9 +112,7 @@
                 overflow: hidden;
             }
 
-            /* ════════════════════════════════════════════════
-           Global Dropzone Overlay
-        ════════════════════════════════════════════════ */
+            /* Global Dropzone Overlay */
             .global-dropzone-overlay {
                 position: fixed;
                 inset: 0;
@@ -132,7 +126,7 @@
                 backdrop-filter: blur(4px);
             }
             .global-dropzone-overlay * {
-                pointer-events: none; /* 방해되지 않도록 자식 요소 이벤트 무시 */
+                pointer-events: none;
             }
             .global-dropzone-overlay .overlay-text {
                 font-size: 24px;
@@ -140,9 +134,7 @@
                 margin-top: 16px;
             }
 
-            /* ════════════════════════════════════════════════
-           Sidebar
-        ════════════════════════════════════════════════ */
+            /* Sidebar */
             .sidebar {
                 width: var(--sidebar-w);
                 min-width: var(--sidebar-w);
@@ -243,6 +235,7 @@
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 0.08em;
+				margin-top: 8px;
                 color: var(--text-3);
                 padding: 12px 4px 4px;
                 user-select: none;
@@ -369,10 +362,10 @@
                 margin: 2px 0;
             }
             .field-label {
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 500;
                 color: var(--text-2);
-                padding: 0 2px;
+                padding: 0 4px;
             }
             .field-input {
                 width: 100%;
@@ -530,9 +523,7 @@
                 margin: 8px 0;
             }
 
-            /* ════════════════════════════════════════════════
-           Main content area
-        ════════════════════════════════════════════════ */
+            /* Main content area */
             .main {
                 display: flex;
                 flex-direction: column;
@@ -847,7 +838,7 @@
                     <polyline points="16 16 12 12 8 16" />
                     <line x1="12" y1="12" x2="12" y2="21" />
                 </svg>
-                <div class="overlay-text">여기에 파일을 놓아주세요</div>
+                <div class="overlay-text">Drop here</div>
             </div>
 
             <aside class="sidebar" v-bind:class="{ collapsed: !isSidebarOpen }">
@@ -855,7 +846,7 @@
                     <div class="sidebar-logo">
                         <div class="logo-icon"></div>
                         <span class="logo-text">Monopress</span>
-                        <span class="logo-version">v3.0</span>
+                        <span class="logo-version">v1.1</span>
                     </div>
 
                     <div class="sidebar-body">
@@ -876,7 +867,7 @@
                             </div>
 
                             <div class="dz-title">{{ file ? `Selected` : 'Select a *.md file' }}</div>
-                            <div class="dz-sub">Or drag and drop</div>
+                            <div class="dz-sub">Drag &amp; Drop</div>
 
                             <div class="dz-file-row">
                                 <span class="dz-filename">{{ file?.name || '—' }}</span>
@@ -889,8 +880,6 @@
                             </div>
                         </div>
 
-                        <div class="divider"></div>
-
                         <div class="sidebar-section">OPTIONS</div>
 
                         <div class="field">
@@ -902,8 +891,6 @@
                             <label class="field-label" for="optCss">SYLESHEET</label>
                             <input class="field-input" type="text" id="optCss" v-model="options.cssUrl" />
                         </div>
-
-                        <div class="divider"></div>
 
                         <div class="sidebar-section">ACTIONS</div>
 
@@ -1013,7 +1000,7 @@
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                             </svg>
                             <svg viewBox="0 0 24 24" v-else><polyline points="20 6 9 17 4 12" /></svg>
-                            <span>{{ copied ? 'COPIED!' : 'COPY' }}</span>
+                            <span>{{ copied ? 'COPIED' : 'COPY' }}</span>
                         </button>
                     </div>
                 </div>
@@ -1118,7 +1105,7 @@
                     // Conversion Options State (Simplified)
                     const options = ref({
                         title: '',
-                        cssUrl: 'https://mmrcdn.github.io/CDN/md.css',
+                        cssUrl: 'https://mmrcdn.github.io/monopress/ui@markdown.css',
                     });
 
                     // Theme Management
@@ -1204,7 +1191,7 @@
                                 try {
                                     const rawMd = e.target.result;
                                     const titleStr = options.value.title.trim() || defaultTitle.value;
-                                    const cssStr = options.value.cssUrl.trim() || 'https://mmrcdn.github.io/CDN/md.css';
+                                    const cssStr = options.value.cssUrl.trim() || 'https://mmrcdn.github.io/monopress/ui@markdown.css';
 
                                     // 1. Parse markdown
                                     const bodyHtml = marked.parse(rawMd);
