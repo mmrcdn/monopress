@@ -4,10 +4,11 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Monopress</title>
-		<link rel="stylesheet" href="./ui.css" />
+        <link rel="stylesheet" href="./ui.css" />
         <script src="https://unpkg.com/vue@3.5.30/dist/vue.global.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     </head>
     <body>
         <div id="app" class="app">
@@ -20,7 +21,7 @@
                     <polyline points="16 16 12 12 8 16" />
                     <line x1="12" y1="12" x2="12" y2="21" />
                 </svg>
-                <div class="overlay-text">Drop here</div>
+                <div class="overlay-text">Drop your files here</div>
             </div>
 
             <aside class="sidebar" v-bind:class="{ collapsed: !isSidebarOpen }">
@@ -28,72 +29,73 @@
                     <div class="sidebar-logo">
                         <div class="logo-icon"></div>
                         <span class="logo-text">Monopress</span>
-                        <span class="logo-version">v1.1</span>
+                        <span class="logo-version">v1.1.3</span>
                     </div>
 
                     <div class="sidebar-body">
                         <div class="sidebar-section">UPLOAD</div>
 
-                        <div class="dropzone" v-bind:class="{ 'has-file': file }">
-                            <input type="file" accept=".md,text/markdown,text/plain" v-on:change="handleFileInput" title="File select" />
+                        <div class="dropzone" v-bind:class="{ 'has-file': files.length > 0 }">
+                            <input type="file" accept=".md,text/markdown,text/plain" multiple v-on:change="handleFileInput" title="File select" />
 
                             <div class="dz-icon">
-                                <svg viewBox="0 0 24 24" v-if="!file">
+                                <svg viewBox="0 0 24 24" v-if="files.length === 0">
                                     <polyline points="16 16 12 12 8 16" />
                                     <line x1="12" y1="12" x2="12" y2="21" />
                                     <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
                                 </svg>
                                 <svg viewBox="0 0 24 24" v-else>
-                                    <polyline points="20 6 9 17 4 12" />
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="12" y1="18" x2="12" y2="12" />
+                                    <line x1="9" y1="15" x2="15" y2="15" />
                                 </svg>
                             </div>
 
-                            <div class="dz-title">{{ file ? `Selected` : 'Select a *.md file' }}</div>
+                            <div class="dz-title">{{ files.length > 0 ? `${files.length} Files Loaded` : 'Select *.md files' }}</div>
                             <div class="dz-sub">Drag &amp; Drop</div>
 
                             <div class="dz-file-row">
-                                <span class="dz-filename">{{ file?.name || '—' }}</span>
-                                <button class="dz-remove" title="Delete" v-on:click.prevent="clearFile">
+                                <button
+                                    class="dz-remove"
+                                    title="Clear All"
+                                    v-on:click.prevent="clearAllFiles"
+                                    v-if="files.length > 0"
+                                    style="
+                                        width: 100%;
+                                        justify-content: center;
+                                        gap: 4px;
+                                        padding: 4px;
+                                        background: var(--hover-bg);
+                                        border-radius: var(--radius-sm);
+                                    "
+                                >
                                     <svg viewBox="0 0 24 24">
                                         <line x1="18" y1="6" x2="6" y2="18" />
                                         <line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
+                                    <span style="font-size: 10px; font-weight: 500">CLEAR ALL</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="sidebar-section">OPTIONS</div>
-
-                        <div class="field">
-                            <label class="field-label" for="optTitle">FILENAME</label>
-                            <input class="field-input" type="text" id="optTitle" v-bind:placeholder="defaultTitle" v-model="options.title" />
-                        </div>
+                        <div class="sidebar-section">GLOBAL OPTIONS</div>
 
                         <div class="field" style="margin-top: 8px">
-                            <label class="field-label" for="optCss">SYLESHEET</label>
-                            <input class="field-input" type="text" id="optCss" v-model="options.cssUrl" />
+                            <label class="field-label" for="optCss">SYLESHEET (CSS URL)</label>
+                            <input class="field-input" type="text" id="optCss" v-model="options.cssUrl" v-on:change="reconvertAll" />
                         </div>
 
                         <div class="sidebar-section">ACTIONS</div>
 
-                        <button class="btn btn-primary" v-bind:disabled="!file || status === 'converting'" v-on:click="convertFile">
-                            <svg viewBox="0 0 24 24" v-if="status === 'converting'" class="spinning">
-                                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        <button class="btn btn-primary" v-bind:disabled="files.length === 0" v-on:click="downloadZip">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
-                            <svg viewBox="0 0 24 24" v-else>
-                                <polygon points="5 3 19 12 5 21 5 3" />
-                            </svg>
+                            <span>DOWNLOAD ALL (ZIP)</span>
                         </button>
-
-                        <div style="margin-top: 8px">
-                            <button class="btn btn-default" v-bind:disabled="!finalHtml" v-on:click="downloadHtml">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="7 10 12 15 17 10" />
-                                    <line x1="12" y1="15" x2="12" y2="3" />
-                                </svg>
-                            </button>
-                        </div>
                     </div>
 
                     <div class="sidebar-footer">
@@ -103,14 +105,14 @@
                             Powered by AURM
                         </div>
                         <div class="theme-switcher">
-                            <button class="theme-btn" v-bind:class="{ active: theme === 'system' }" v-on:click="setTheme('system')" title="시스템 기본값">
+                            <button class="theme-btn" v-bind:class="{ active: theme === 'system' }" v-on:click="setTheme('system')" title="System">
                                 <svg viewBox="0 0 24 24">
                                     <rect x="2" y="3" width="20" height="14" rx="2" />
                                     <line x1="8" y1="21" x2="16" y2="21" />
                                     <line x1="12" y1="17" x2="12" y2="21" />
                                 </svg>
                             </button>
-                            <button class="theme-btn" v-bind:class="{ active: theme === 'light' }" v-on:click="setTheme('light')" title="밝은 테마">
+                            <button class="theme-btn" v-bind:class="{ active: theme === 'light' }" v-on:click="setTheme('light')" title="Light">
                                 <svg viewBox="0 0 24 24">
                                     <circle cx="12" cy="12" r="4" />
                                     <line x1="12" y1="2" x2="12" y2="6" />
@@ -123,7 +125,7 @@
                                     <line x1="16.95" y1="7.05" x2="19.78" y2="4.22" />
                                 </svg>
                             </button>
-                            <button class="theme-btn" v-bind:class="{ active: theme === 'dark' }" v-on:click="setTheme('dark')" title="어두운 테마">
+                            <button class="theme-btn" v-bind:class="{ active: theme === 'dark' }" v-on:click="setTheme('dark')" title="Dark">
                                 <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
                             </button>
                         </div>
@@ -140,82 +142,156 @@
                             <line x1="3" y1="18" x2="21" y2="18" />
                         </svg>
                     </button>
-
-                    <span class="topbar-filename" v-if="file">{{ file.name }}</span>
-
+                    <span class="topbar-filename" v-if="activeFile">{{ activeFile.title }}</span>
                     <div class="topbar-status">
                         <div class="status-dot" v-bind:class="status"></div>
                         <span>{{ statusText }}</span>
                     </div>
                 </div>
 
-                <div class="tab-bar">
-                    <button class="tab" v-bind:class="{ active: activeTab === 'preview' }" v-on:click="activeTab = 'preview'">
-                        <svg viewBox="0 0 24 24">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                        </svg>
-                        <span>PREVIEW</span>
-                    </button>
-                    <button class="tab" v-bind:class="{ active: activeTab === 'source' }" v-on:click="activeTab = 'source'">
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="16 18 22 12 16 6" />
-                            <polyline points="8 6 2 12 8 18" />
-                        </svg>
-                        <span>HTML</span>
-                    </button>
-                    <div class="tab-spacer"></div>
-
-                    <div class="tab-actions">
-                        <button class="btn btn-ghost btn-sm" v-bind:disabled="!finalHtml" v-on:click="printPreview" title="문서 인쇄">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="6 9 6 2 18 2 18 9" />
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                                <rect x="6" y="14" width="12" height="8" />
-                            </svg>
-                            <span>PRINT</span>
-                        </button>
-                        <button class="btn btn-ghost btn-sm" v-bind:disabled="!finalHtml" v-on:click="copySource" title="소스 복사">
-                            <svg viewBox="0 0 24 24" v-if="!copied">
-                                <rect x="9" y="9" width="13" height="13" rx="2" />
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                            </svg>
-                            <svg viewBox="0 0 24 24" v-else><polyline points="20 6 9 17 4 12" /></svg>
-                            <span>{{ copied ? 'COPIED' : 'COPY' }}</span>
-                        </button>
-                    </div>
-                </div>
-
                 <div class="panel-wrap">
-                    <div class="tab-panel" v-bind:class="{ active: activeTab === 'preview' }">
-                        <div class="empty-state" v-if="!finalHtml">
-                            <div class="empty-state-icon">
+                    <!-- File Stack Sidebar -->
+                    <div class="file-list-pane">
+                        <div class="file-list-header">
+                            <span>Stack ({{ files.length }})</span>
+                        </div>
+                        <div class="file-list-empty" v-if="files.length === 0">No files added</div>
+                        <div
+                            class="file-item"
+                            v-for="item in files"
+                            :key="item.id"
+                            :class="{ active: item.id === activeFileId }"
+                            v-on:click="activeFileId = item.id"
+                        >
+                            <div class="file-item-info">
+                                <div class="file-item-title" :title="item.title">{{ item.title }}</div>
+                                <div class="file-item-meta">
+                                    <div class="status-dot" :class="item.status" style="width: 6px; height: 6px"></div>
+                                    {{ formatSize(item.file.size) }}
+                                </div>
+                            </div>
+                            <button class="file-item-remove" v-on:click.stop="removeFile(item.id)" title="삭제">
+                                <svg viewBox="0 0 24 24">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Content Panel -->
+                    <div class="content-pane">
+                        <!-- 변경된 Tool Bar -->
+                        <div class="tool-bar">
+                            <button class="tab" v-bind:class="{ active: activeTab === 'markdown' }" v-on:click="activeTab = 'markdown'">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <polyline points="10 9 9 9 8 9" />
+                                </svg>
+                                <span>MARKDOWN</span>
+                            </button>
+                            <button class="tab" v-bind:class="{ active: activeTab === 'preview' }" v-on:click="activeTab = 'preview'">
                                 <svg viewBox="0 0 24 24">
                                     <rect x="3" y="3" width="18" height="18" rx="2" />
                                     <circle cx="8.5" cy="8.5" r="1.5" />
                                     <polyline points="21 15 16 10 5 21" />
                                 </svg>
-                            </div>
-                            <div class="empty-state-title">No preview available</div>
-                            <div class="empty-state-sub">Upload and convert your MARKDOWN file</div>
-                        </div>
-                        <iframe v-else ref="previewFrameRef" class="preview-iframe" title="preview" v-bind:srcdoc="finalHtml"></iframe>
-                    </div>
-
-                    <div class="tab-panel" v-bind:class="{ active: activeTab === 'source' }">
-                        <div class="empty-state" v-if="!finalHtml">
-                            <div class="empty-state-icon">
+                                <span>PREVIEW</span>
+                            </button>
+                            <button class="tab" v-bind:class="{ active: activeTab === 'source' }" v-on:click="activeTab = 'source'">
                                 <svg viewBox="0 0 24 24">
                                     <polyline points="16 18 22 12 16 6" />
                                     <polyline points="8 6 2 12 8 18" />
                                 </svg>
+                                <span>HTML</span>
+                            </button>
+
+                            <div class="tab-spacer"></div>
+
+                            <div class="tab-actions">
+                                <button class="btn btn-ghost btn-sm" v-bind:disabled="!finalHtml" v-on:click="downloadHtml" title="현재 HTML 다운로드">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="12" y1="18" x2="12" y2="12" />
+                                        <polyline points="9 15 12 18 15 15" />
+                                    </svg>
+                                    <span>DOWNLOAD</span>
+                                </button>
+                                <button class="btn btn-ghost btn-sm" v-bind:disabled="!finalHtml" v-on:click="printPreview" title="문서 인쇄">
+                                    <svg viewBox="0 0 24 24">
+                                        <polyline points="6 9 6 2 18 2 18 9" />
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                                        <rect x="6" y="14" width="12" height="8" />
+                                    </svg>
+                                    <span>PRINT</span>
+                                </button>
+                                <button class="btn btn-ghost btn-sm" v-bind:disabled="!finalHtml" v-on:click="copySource" title="소스 복사">
+                                    <svg viewBox="0 0 24 24" v-if="!copied">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                    </svg>
+                                    <svg viewBox="0 0 24 24" v-else><polyline points="20 6 9 17 4 12" /></svg>
+                                    <span>{{ copied ? 'COPIED' : 'COPY' }}</span>
+                                </button>
                             </div>
-                            <div class="empty-state-title">소스 없음</div>
-                            <div class="empty-state-sub">변환 후 HTML 소스가 표시돼요</div>
                         </div>
-                        <div class="source-wrap" v-else>
-                            <pre class="source-code"><code>{{ finalHtml }}</code></pre>
+
+                        <!-- 뷰어 본문 영역 -->
+                        <div class="content-body">
+                            <!-- 신규 추가된 마크다운 원본 패널 -->
+                            <div class="tab-panel" v-bind:class="{ active: activeTab === 'markdown' }">
+                                <div class="empty-state" v-if="!rawMarkdown">
+                                    <div class="empty-state-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <polyline points="14 2 14 8 20 8" />
+                                            <line x1="16" y1="13" x2="8" y2="13" />
+                                            <line x1="16" y1="17" x2="8" y2="17" />
+                                            <polyline points="10 9 9 9 8 9" />
+                                        </svg>
+                                    </div>
+                                    <div class="empty-state-title">마크다운 없음</div>
+                                    <div class="empty-state-sub">파일을 선택하면 마크다운 원본이 표시돼요</div>
+                                </div>
+                                <div class="source-wrap" v-else>
+                                    <pre class="source-code"><code>{{ rawMarkdown }}</code></pre>
+                                </div>
+                            </div>
+
+                            <div class="tab-panel" v-bind:class="{ active: activeTab === 'preview' }">
+                                <div class="empty-state" v-if="!finalHtml">
+                                    <div class="empty-state-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                                            <circle cx="8.5" cy="8.5" r="1.5" />
+                                            <polyline points="21 15 16 10 5 21" />
+                                        </svg>
+                                    </div>
+                                    <div class="empty-state-title">No preview available</div>
+                                    <div class="empty-state-sub">Select a file from the stack to view</div>
+                                </div>
+                                <iframe v-else ref="previewFrameRef" class="preview-iframe" title="preview" v-bind:srcdoc="finalHtml"></iframe>
+                            </div>
+
+                            <div class="tab-panel" v-bind:class="{ active: activeTab === 'source' }">
+                                <div class="empty-state" v-if="!finalHtml">
+                                    <div class="empty-state-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <polyline points="16 18 22 12 16 6" />
+                                            <polyline points="8 6 2 12 8 18" />
+                                        </svg>
+                                    </div>
+                                    <div class="empty-state-title">소스 없음</div>
+                                    <div class="empty-state-sub">파일을 선택하면 HTML 소스가 표시돼요</div>
+                                </div>
+                                <div class="source-wrap" v-else>
+                                    <pre class="source-code"><code>{{ finalHtml }}</code></pre>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
