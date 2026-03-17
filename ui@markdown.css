@@ -60,6 +60,7 @@ h2::before {
     font-weight: 400;
     color: var(--ink-light);
     flex-shrink: 0;
+    margin-left: -0.25rem;
 }
 h2::after {
     content: '';
