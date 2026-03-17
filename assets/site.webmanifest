@@ -1,14 +1,26 @@
 {
-  "name": "Monopress",
-  "short_name": "Monopress",
-  "description": "Markdown to print-ready monochrome HTML renderer",
-  "icons": [
-    { "src": "/favicon-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/favicon-512x512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/favicon.svg",         "sizes": "any",     "type": "image/svg+xml" }
-  ],
-  "theme_color": "#f5f5f3",
-  "background_color": "#f5f5f3",
-  "display": "standalone",
-  "start_url": "/"
+    "name": "Monopress",
+    "short_name": "Monopress",
+    "description": "Markdown to print-ready monochrome HTML renderer",
+    "icons": [
+        {
+            "src": "favicon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "favicon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "theme_color": "#f5f5f3",
+    "background_color": "#f5f5f3",
+    "display": "standalone",
+    "start_url": "/monopress/"
 }
