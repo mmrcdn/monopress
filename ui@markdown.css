@@ -351,11 +351,11 @@ footer {
         page-break-inside: avoid;
     }
 
-    a::after {
+    /*a::after {
         content: ' (' attr(href) ')';
         font-size: 10px;
         color: var(--ink-light);
-    }
+    }*/
     a[href^='#']::after,
     a[href^='javascript:']::after {
         content: '';
