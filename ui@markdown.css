@@ -285,7 +285,7 @@ img {
     display: block;
     margin: 16px 0;
     border-radius: 0;
-    filter: grayscale(100%) contrast(1.05); /* 흑백 변환 */
+    filter: grayscale(100%) contrast(1.05);
     border: 1px solid var(--ink-ghost);
 }
 figcaption {
@@ -313,7 +313,6 @@ footer {
         margin: 20mm 20mm 20mm 20mm;
     }
 
-    /* 폰트 로드 제거 시 대체 안전망 */
     body {
         font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'NanumGothic', sans-serif;
         font-size: 12.5px;
@@ -325,7 +324,6 @@ footer {
         print-color-adjust: exact;
     }
 
-    /* 페이지 나누기 제어 */
     h1 {
         page-break-before: auto;
         page-break-after: avoid;
@@ -338,13 +336,11 @@ footer {
         page-break-after: avoid;
     }
     pre,
-    table,
     blockquote,
     figure {
         page-break-inside: avoid;
     }
 
-    /* 표 헤더 반복 */
     thead {
         display: table-header-group;
     }
@@ -355,7 +351,6 @@ footer {
         page-break-inside: avoid;
     }
 
-    /* 링크 URL 표시 */
     a::after {
         content: ' (' attr(href) ')';
         font-size: 10px;
@@ -366,7 +361,6 @@ footer {
         content: '';
     }
 
-    /* 코드블록 배경 인쇄 강제 */
     pre {
         background: #111 !important;
         color: #f0f0f0 !important;
@@ -375,7 +369,6 @@ footer {
         print-color-adjust: exact;
     }
 
-    /* 이미지 흑백 강제 */
     img {
         filter: grayscale(100%) contrast(1.1) !important;
     }
