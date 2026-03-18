@@ -116,6 +116,10 @@ p {
     word-break: keep-all;
     overflow-wrap: break-word;
 }
+p + h3,
+p + h4 {
+    margin-top: 28px;
+}
 a {
     color: var(--ink-deep);
     text-decoration: none;
@@ -137,10 +141,10 @@ del {
     text-decoration: line-through;
 }
 code {
-    padding: 2px 4px;
-    margin: 0 1px !important;
+    padding: 0.15em 0.25em;
+    margin: 0 0.085em !important;
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.925em;
     line-height: 1.1;
     color: var(--ink-black);
     background: var(--ink-paper);
@@ -197,7 +201,9 @@ table {
     border-collapse: collapse;
 }
 h3 + table,
-h4 + table {
+h4 + table,
+h3 + pre,
+h4 + pre {
     margin-top: -4px;
 }
 table thead tr {
