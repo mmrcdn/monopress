@@ -319,8 +319,8 @@ img {
     height: auto;
     margin: 16px 0;
     filter: grayscale(100%) contrast(1.05);
-    border: 1px solid var(--ink-ghost);
     border-radius: 0;
+    line-height: 0;
 }
 figcaption {
     margin-top: 4px;
