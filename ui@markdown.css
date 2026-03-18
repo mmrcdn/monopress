@@ -204,7 +204,7 @@ h3 + table,
 h4 + table,
 h3 + pre,
 h4 + pre {
-    margin-top: -4px;
+    margin-top: 0px;
 }
 table thead tr {
     border-top: 2px solid var(--ink-dark);
