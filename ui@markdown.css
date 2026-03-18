@@ -175,6 +175,9 @@ pre code {
     border: none;
     border-radius: 0;
 }
+pre + pre {
+    margin-top: -12px;
+}
 blockquote {
     padding: 4px 0 4px 20px;
     margin: 20px 0;
@@ -199,12 +202,6 @@ table {
     font-size: 0.75rem;
     line-height: 1.75;
     border-collapse: collapse;
-}
-h3 + table,
-h4 + table,
-h3 + pre,
-h4 + pre {
-    margin-top: 0px;
 }
 table thead tr {
     border-top: 2px solid var(--ink-dark);
@@ -231,6 +228,12 @@ table tbody tr:last-child td {
 }
 table tbody tr:hover td {
     background: var(--ink-paper);
+}
+h3 + table,
+h4 + table,
+h3 + pre,
+h4 + pre {
+    margin-top: -4px;
 }
 ul {
     padding: 0;
