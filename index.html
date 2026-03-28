@@ -176,7 +176,7 @@
                                     <polyline points="6 9 12 15 18 9" />
                                 </svg>
                             </button>
-                            <div class="dropdown-menu" v-show="isLangMenuOpen" style="display: none">
+                            <div class="dropdown-menu" v-bind:class="{ 'is-open': isLangMenuOpen }">
                                 <button
                                     class="dropdown-item"
                                     v-for="(langName, langCode) in locales"
@@ -267,7 +267,7 @@
                                             <polyline points="6 9 12 15 18 9" />
                                         </svg>
                                     </button>
-                                    <div class="dropdown-menu" v-show="isDownloadMenuOpen" style="display: none">
+                                    <div class="dropdown-menu" v-bind:class="{ 'is-open': isDownloadMenuOpen }">
                                         <button class="dropdown-item" v-on:click="executeDownload('pdf')">{{ t('download.pdf') }}</button>
                                         <button class="dropdown-item" v-on:click="executeDownload('webp')">{{ t('download.webp') }}</button>
                                         <button class="dropdown-item" v-on:click="executeDownload('html')">{{ t('download.html') }}</button>

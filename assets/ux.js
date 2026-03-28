@@ -35,7 +35,7 @@ createApp({
     setup() {
         const { t, locale, setLocaleMessage, availableLocales } = useI18n();
 
-        const VERSION = ref('1.2.1');
+        const VERSION = ref('1.2.2');
         const uploadedFiles = ref([]);
         const selectedFileId = ref(null);
         const isDragOverDropzone = ref(false);
