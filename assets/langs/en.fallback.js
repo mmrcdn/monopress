@@ -3,92 +3,108 @@ window.MonopressDefaultLangs = {
         copy: 'Copy',
         copied: 'Copied',
     },
+
     dropzone: {
         overlay: 'Drop files here',
-        fileSelect: 'Browse',
-        selectFiles: 'Select .md files',
-        filesLoaded: '{count} files',
-        dragDrop: 'Drag & drop',
-        clearAll: 'Clear all',
+        browse: 'Browse',
+        select: 'Select .md files',
+        loaded: '{count} files',
+        hint: 'Drag & drop',
+        clear: 'Clear all',
     },
+
     sidebar: {
         upload: 'Upload',
-        globalOptions: 'Settings',
-        stylesheet: 'Custom CSS (URL)',
-        stylesheetPlaceholder: 'Using default theme',
+        settings: 'Settings',
+        cssLabel: 'Custom CSS (URL)',
+        cssPlaceholder: 'Using default theme',
         actions: 'Actions',
         downloadAll: 'Download all (ZIP)',
     },
+
     header: {
-        sidebarToggle: 'Toggle sidebar',
-        noSelection: 'No file selected',
+        toggleSidebar: 'Toggle sidebar',
+        noFile: 'No file selected',
         downloadOptions: 'Download options',
-        download: 'Download',
-        printTitle: 'Print',
+        download: 'Export',
         print: 'Print',
-        copySourceTitle: 'Copy source',
-        languageOptions: 'Language',
+        printTooltip: 'Print',
+        copySource: 'Copy source',
+        language: 'Language',
     },
+
     status: {
         idle: 'Idle',
-        converting: 'Processing...',
-        ready: 'Done',
+        processing: 'Processing...',
+        done: 'Done',
         error: 'Error',
     },
-    fileList: {
-        stack: 'Files',
-        noFiles: 'No files',
-        deleteTitle: 'Remove',
+
+    files: {
+        title: 'Files',
+        empty: 'No files',
+        remove: 'Remove',
     },
+
     tabs: {
         markdown: 'Markdown',
         preview: 'Preview',
         html: 'HTML',
     },
-    downloadMenu: {
+
+    download: {
         pdf: 'Export as PDF',
         webp: 'Export as WEBP',
         html: 'Export as HTML',
     },
+
     viewer: {
-        noMarkdownTitle: 'No Markdown',
-        noMarkdownDesc: 'Select a file to view Markdown',
-        noPreviewTitle: 'No preview',
-        noPreviewDesc: 'Select a file to preview',
-        noSourceTitle: 'No HTML',
-        noSourceDesc: 'Select a file to view HTML',
+        markdownEmptyTitle: 'No Markdown',
+        markdownEmptyDesc: 'Select a file to view Markdown',
+        previewEmptyTitle: 'No preview',
+        previewEmptyDesc: 'Select a file to preview',
+        htmlEmptyTitle: 'No HTML',
+        htmlEmptyDesc: 'Select a file to view HTML',
     },
+
     toast: {
-        errorGenerateHtml: 'Failed to generate HTML for {name}',
-        errorReadFile: 'Failed to read {name}',
+        htmlError: 'Failed to generate HTML for {name}',
+        readError: 'Failed to read {name}',
         filesLoaded: '{count} files loaded',
-        unsupportedFile: 'Only .md files supported',
-        workspaceCleared: 'Workspace cleared',
-        fileDownloaded: '{name} downloaded',
-        pdfLibMissing: 'PDF library missing',
+        unsupported: 'Only .md files supported',
+        cleared: 'Workspace cleared',
+        downloaded: '{name} downloaded',
+
+        pdfMissing: 'PDF library missing',
         pdfStart: 'Generating PDF...',
         pdfFail: 'PDF generation failed',
-        webpLibMissing: 'Image library missing',
+
+        webpMissing: 'Image library missing',
         webpStart: 'Generating WEBP...',
         webpFail: 'WEBP generation failed',
-        zipLibMissing: 'ZIP library missing',
+
+        zipMissing: 'ZIP library missing',
         zipStart: 'Creating ZIP...',
-        zipNoFiles: 'No files to zip',
+        zipEmpty: 'No files to zip',
         zipSuccess: '{count} files zipped',
         zipError: 'ZIP error: {msg}',
+
         copied: 'Copied',
-        corsError: 'Language loading requires a server environment',
+        cors: 'Language loading requires a server environment',
     },
+
     footer: {
         copyright: '© MMR',
-        poweredBy: 'Powered by AURM',
+        powered: 'Powered by AURM',
     },
+
     theme: {
         system: 'System',
         light: 'Light',
         dark: 'Dark',
     },
+
     export: {
-        defaultZipName: 'monopress_export.zip',
+        zipName: 'monopress_export.zip',
     },
 };

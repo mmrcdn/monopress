@@ -1,94 +1,94 @@
 {
     "common": {
         "copy": "복사",
-        "copied": "복사됨"
+        "copied": "복사 완료"
     },
     "dropzone": {
-        "overlay": "여기에 파일을 놓으세요",
-        "fileSelect": "파일 선택",
-        "selectFiles": "*.md 파일 선택",
-        "filesLoaded": "{count}개 파일 로드됨",
-        "dragDrop": "드래그 앤 드롭",
-        "clearAll": "모두 지우기"
+        "overlay": "여기에 파일 놓기",
+        "browse": "찾아보기",
+        "select": ".md 파일 선택",
+        "loaded": "파일 {count}개",
+        "hint": "끌어다 놓기",
+        "clear": "모두 지우기"
     },
     "sidebar": {
-        "upload": "업로드",
-        "globalOptions": "전역 설정",
-        "stylesheet": "스타일시트 (CSS URL)",
-        "stylesheetPlaceholder": "기본 테마 적용됨",
+        "upload": "올리기",
+        "settings": "설정",
+        "cssLabel": "사용자 정의 CSS (URL)",
+        "cssPlaceholder": "기본 모양새 사용 중",
         "actions": "작업",
-        "downloadAll": "모두 다운로드 (ZIP)"
+        "downloadAll": "모두 내려받기 (ZIP)"
     },
     "header": {
-        "sidebarToggle": "사이드바 전환",
-        "noSelection": "선택 안 됨",
-        "downloadOptions": "다운로드 옵션",
-        "download": "다운로드",
-        "printTitle": "문서 인쇄",
+        "toggleSidebar": "옆면 숨기기/보이기",
+        "noFile": "선택한 파일 없음",
+        "downloadOptions": "내려받기 선택사항",
+        "download": "내보내기",
         "print": "인쇄",
-        "copySourceTitle": "소스 코드 복사",
-        "languageOptions": "언어 변경"
+        "printTooltip": "인쇄하기",
+        "copySource": "원본 복사",
+        "language": "언어"
     },
     "status": {
-        "idle": "대기 중...",
-        "converting": "변환 중...",
-        "ready": "완료",
-        "error": "오류 발생"
+        "idle": "대기 중",
+        "processing": "처리 중...",
+        "done": "완료",
+        "error": "오류"
     },
-    "fileList": {
-        "stack": "스택",
-        "noFiles": "추가된 파일 없음",
-        "deleteTitle": "삭제"
+    "files": {
+        "title": "파일",
+        "empty": "파일 없음",
+        "remove": "빼기"
     },
     "tabs": {
         "markdown": "마크다운",
         "preview": "미리보기",
         "html": "HTML"
     },
-    "downloadMenu": {
-        "pdf": "PDF로 다운로드",
-        "webp": "WEBP로 다운로드",
-        "html": "HTML로 다운로드"
+    "download": {
+        "pdf": "PDF로 내보내기",
+        "webp": "WEBP로 내보내기",
+        "html": "HTML로 내보내기"
     },
     "viewer": {
-        "noMarkdownTitle": "마크다운 없음",
-        "noMarkdownDesc": "원본 마크다운을 보려면 파일을 선택하세요",
-        "noPreviewTitle": "미리보기 없음",
-        "noPreviewDesc": "스택에서 파일을 선택하여 확인하세요",
-        "noSourceTitle": "소스 없음",
-        "noSourceDesc": "HTML 소스를 보려면 파일을 선택하세요"
+        "markdownEmptyTitle": "마크다운 없음",
+        "markdownEmptyDesc": "마크다운을 볼 파일을 선택하세요",
+        "previewEmptyTitle": "미리보기 없음",
+        "previewEmptyDesc": "미리 볼 파일을 선택하세요",
+        "htmlEmptyTitle": "HTML 없음",
+        "htmlEmptyDesc": "HTML을 볼 파일을 선택하세요"
     },
     "toast": {
-        "errorGenerateHtml": "{name} HTML 생성 오류",
-        "errorReadFile": "{name} 읽기 오류",
-        "filesLoaded": "{count}개 파일 로드됨",
-        "unsupportedFile": ".md 파일만 지원됩니다",
-        "workspaceCleared": "작업 공간이 초기화되었습니다",
-        "fileDownloaded": "{name} 다운로드됨",
-        "pdfLibMissing": "PDF 렌더링 라이브러리가 없습니다.",
-        "pdfStart": "PDF 변환을 시작합니다...",
-        "pdfFail": "PDF 생성에 실패했습니다.",
-        "webpLibMissing": "이미지 렌더링 라이브러리가 없습니다.",
-        "webpStart": "WEBP 변환을 시작합니다...",
-        "webpFail": "WEBP 생성에 실패했습니다.",
-        "zipLibMissing": "JSZip 라이브러리가 없습니다.",
-        "zipStart": "파일 압축을 시작합니다...",
-        "zipNoFiles": "압축할 수 있는 완료된 파일이 없습니다.",
-        "zipSuccess": "{count}개 파일 ZIP 내보내기 완료",
-        "zipError": "ZIP 오류: {msg}",
-        "copied": "클립보드에 복사되었습니다",
-        "corsError": "서버 환경에서만 다른 언어를 불러올 수 있어요."
+        "htmlError": "{name}의 HTML 생성에 실패했어요",
+        "readError": "{name}을(를) 읽을 수 없어요",
+        "filesLoaded": "파일 {count}개를 불러왔어요",
+        "unsupported": ".md 파일만 지원해요",
+        "cleared": "작업 공간을 비웠어요",
+        "downloaded": "{name}을(를) 내려받았어요",
+        "pdfMissing": "PDF 보조 도구가 없어요",
+        "pdfStart": "PDF 만드는 중...",
+        "pdfFail": "PDF 만들기에 실패했어요",
+        "webpMissing": "이미지 보조 도구가 없어요",
+        "webpStart": "WEBP 만드는 중...",
+        "webpFail": "WEBP 만들기에 실패했어요",
+        "zipMissing": "압축 보조 도구가 없어요",
+        "zipStart": "압축 파일 만드는 중...",
+        "zipEmpty": "압축할 파일이 없어요",
+        "zipSuccess": "파일 {count}개를 압축했어요",
+        "zipError": "압축 오류: {msg}",
+        "copied": "복사했어요",
+        "cors": "언어를 불러오려면 서버 환경이 필요해요"
     },
     "footer": {
         "copyright": "© MMR",
-        "poweredBy": "Powered by AURM"
+        "powered": "Powered by AURM"
     },
     "theme": {
-        "system": "시스템",
-        "light": "라이트",
-        "dark": "다크"
+        "system": "기기",
+        "light": "밝게",
+        "dark": "어둡게"
     },
     "export": {
-        "defaultZipName": "monopress_export.zip"
+        "zipName": "monopress_export.zip"
     }
 }

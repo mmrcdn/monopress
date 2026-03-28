@@ -101,9 +101,10 @@ body {
     font-size: 0.875rem; /* 14px */
     line-height: 1.5;
     color: var(--text-1);
+    user-select: none;
     background-color: var(--bg);
     -webkit-font-smoothing: antialiased;
-    user-select: none;
+    text-rendering: optimizeLegibility !important;
 }
 
 /* ── App Layout ── */
@@ -226,7 +227,7 @@ body {
     padding: 12px 4px 4px;
     margin-top: 8px;
     font-size: 0.75rem; /* 12px */
-    font-weight: 800;
+    font-weight: 700;
     color: var(--text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -539,13 +540,13 @@ body {
     background-color: var(--border);
     border-radius: 50%;
 }
-.status-indicator.is-ready {
+.status-indicator.is-done {
     background-color: var(--success);
 }
 .status-indicator.is-error {
     background-color: var(--error);
 }
-.status-indicator.is-converting {
+.status-indicator.is-processing {
     background-color: var(--warning);
     animation: pulse-animation 0.8s infinite alternate;
 }
@@ -611,6 +612,10 @@ body {
     color: var(--text-3);
     text-align: center;
     user-select: none;
+    height: 100%;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
 }
 .file-item {
     position: relative;
@@ -718,6 +723,7 @@ body {
     font-size: 0.75rem; /* 12px */
     font-weight: 500;
     color: var(--text-2);
+    text-transform: uppercase;
     cursor: pointer;
     background-color: transparent;
     border: none;
@@ -730,6 +736,19 @@ body {
 .tab-item.is-active {
     color: var(--primary);
     border-bottom-color: var(--primary);
+}
+.tab-item svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    fill: none !important; /* 내부 색상 채움 방지 */
+    stroke: currentColor; /* 현재 텍스트 색상(var(--text-2) 또는 var(--primary))을 따름 */
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.tab-item.is-active svg {
+    stroke: var(--primary);
 }
 .tab-spacer {
     flex: 1;
@@ -961,14 +980,14 @@ body {
     color: var(--text-2);
     cursor: pointer;
     background-color: var(--hover-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     outline: none;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
 }
 .locale-select:hover,
 .locale-select:focus {
