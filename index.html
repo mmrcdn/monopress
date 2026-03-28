@@ -7,19 +7,13 @@
         <title>Monopress</title>
         <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
         <link rel="manifest" href="./assets/site.webmanifest" />
+        <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css" />
         <link rel="stylesheet" href="./assets/ui.css" />
     </head>
     <body>
         <div id="app" class="app-container" v-cloak>
             <div v-if="isDragOverDropzone" class="overlay-dropzone-global">
-                <svg
-                    viewBox="0 0 24 24"
-                    style="width: 80px; height: 80px; stroke: #fff; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round"
-                >
-                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-                    <polyline points="16 16 12 12 8 16" />
-                    <line x1="12" y1="12" x2="12" y2="21" />
-                </svg>
+                <i class="icon-upload" style="font-size: 80px; color: #fff"></i>
                 <div class="overlay-title">{{ t('dropzone.overlay') }}</div>
             </div>
 
@@ -27,20 +21,17 @@
                 <div class="sidebar-wrapper">
                     <div class="sidebar-header">
                         <div class="brand-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="16" y1="13" x2="8" y2="13" />
-                                <line x1="16" y1="17" x2="8" y2="17" />
-                                <polyline points="10 9 9 9 8 9" />
-                            </svg>
+                            <i class="icon-hash"></i>
                         </div>
                         <span class="brand-title">Monopress</span>
                         <span class="brand-version">v{{ VERSION }}</span>
                     </div>
 
                     <div class="sidebar-content">
-                        <div class="section-title">{{ t('sidebar.upload') }}</div>
+                        <div class="section-title">
+                            <i class="icon-upload"></i>
+                            <span>{{ t('sidebar.upload') }}</span>
+                        </div>
                         <div class="file-dropzone" v-bind:class="{ 'has-files': hasUploadedFiles }">
                             <input
                                 type="file"
@@ -50,32 +41,17 @@
                                 v-bind:title="t('dropzone.browse')"
                             />
                             <div class="dropzone-icon">
-                                <svg viewBox="0 0 24 24" v-if="!hasUploadedFiles">
-                                    <polyline points="16 16 12 12 8 16" />
-                                    <line x1="12" y1="12" x2="12" y2="21" />
-                                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-                                </svg>
-                                <svg viewBox="0 0 24 24" v-else>
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <polyline points="14 2 14 8 20 8" />
-                                    <line x1="12" y1="18" x2="12" y2="12" />
-                                    <line x1="9" y1="15" x2="15" y2="15" />
-                                </svg>
+                                <i class="icon-upload" v-if="!hasUploadedFiles"></i>
+                                <i class="icon-package" v-else></i>
                             </div>
                             <div class="dropzone-title">{{ dropzoneTitleText }}</div>
                             <div class="dropzone-subtitle">{{ t('dropzone.hint') }}</div>
-                            <div class="dropzone-actions">
-                                <button class="button-remove-all" v-on:click.prevent="clearAllUploadedFiles" v-if="hasUploadedFiles">
-                                    <svg viewBox="0 0 24 24">
-                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                    </svg>
-                                    <span>{{ t('dropzone.clear') }}</span>
-                                </button>
-                            </div>
                         </div>
 
-                        <div class="section-title">{{ t('sidebar.settings') }}</div>
+                        <div class="section-title">
+                            <i class="icon-settings"></i>
+                            <span>{{ t('sidebar.settings') }}</span>
+                        </div>
                         <div class="input-group">
                             <label class="input-label" for="optCss">{{ t('sidebar.cssLabel') }}</label>
                             <input
@@ -87,13 +63,12 @@
                             />
                         </div>
 
-                        <div class="section-title">{{ t('sidebar.actions') }}</div>
+                        <div class="section-title">
+                            <i class="icon-terminal"></i>
+                            <span>{{ t('sidebar.actions') }}</span>
+                        </div>
                         <button class="button button-primary" v-bind:disabled="!hasUploadedFiles" v-on:click="downloadAllFilesAsZip">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="7 10 12 15 17 10" />
-                                <line x1="12" y1="15" x2="12" y2="3" />
-                            </svg>
+                            <i class="icon-download"></i>
                             <span>{{ t('sidebar.downloadAll') }}</span>
                         </button>
                     </div>
@@ -112,11 +87,7 @@
                                 v-bind:data-tooltip="t('theme.system')"
                                 data-tooltip-pos="top"
                             >
-                                <svg viewBox="0 0 24 24">
-                                    <rect x="2" y="3" width="20" height="14" rx="2" />
-                                    <line x1="8" y1="21" x2="16" y2="21" />
-                                    <line x1="12" y1="17" x2="12" y2="21" />
-                                </svg>
+                                <i class="icon-monitor"></i>
                             </button>
                             <button
                                 class="theme-button"
@@ -125,17 +96,7 @@
                                 v-bind:data-tooltip="t('theme.light')"
                                 data-tooltip-pos="top"
                             >
-                                <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="4" />
-                                    <line x1="12" y1="2" x2="12" y2="6" />
-                                    <line x1="12" y1="18" x2="12" y2="22" />
-                                    <line x1="4.22" y1="4.22" x2="7.05" y2="7.05" />
-                                    <line x1="16.95" y1="16.95" x2="19.78" y2="19.78" />
-                                    <line x1="2" y1="12" x2="6" y2="12" />
-                                    <line x1="18" y1="12" x2="22" y2="12" />
-                                    <line x1="4.22" y1="19.78" x2="7.05" y2="16.95" />
-                                    <line x1="16.95" y1="7.05" x2="19.78" y2="4.22" />
-                                </svg>
+                                <i class="icon-sun"></i>
                             </button>
                             <button
                                 class="theme-button"
@@ -144,7 +105,7 @@
                                 v-bind:data-tooltip="t('theme.dark')"
                                 data-tooltip-pos="top"
                             >
-                                <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+                                <i class="icon-moon"></i>
                             </button>
                         </div>
                     </div>
@@ -159,11 +120,7 @@
                         v-bind:data-tooltip="t('header.toggleSidebar')"
                         data-tooltip-pos="right"
                     >
-                        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px">
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
+                        <i class="icon-menu" style="font-size: 16px"></i>
                     </button>
                     <span class="header-filename">{{ selectedFile ? selectedFile.displayTitle : t('header.noFile') }}</span>
                     <div class="header-locales">
@@ -174,15 +131,9 @@
                                 v-bind:data-tooltip="t('header.language')"
                                 data-tooltip-pos="bottom"
                             >
-                                <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="2" y1="12" x2="22" y2="12" />
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                                </svg>
+                                <i class="icon-globe"></i>
                                 <span>{{ currentLocaleName }}</span>
-                                <svg viewBox="0 0 24 24" class="dropdown-caret" v-bind:class="{ 'is-open': isLangMenuOpen }">
-                                    <polyline points="6 9 12 15 18 9" />
-                                </svg>
+                                <i class="icon-chevron-down dropdown-caret" v-bind:class="{ 'is-open': isLangMenuOpen }"></i>
                             </button>
                             <div class="dropdown-menu" v-bind:class="{ 'is-open': isLangMenuOpen }">
                                 <button
@@ -201,7 +152,18 @@
 
                 <div class="workspace-wrapper">
                     <div class="file-list-sidebar">
-                        <div class="file-list-header"><span>{{ t('files.title') }} &middot; {{ uploadedFiles.length }}</span></div>
+                        <div class="file-list-header">
+                            <span>{{ t('files.title') }} &middot; {{ uploadedFiles.length }}</span>
+                            <button
+                                class="button button-remove-all"
+                                v-on:click.prevent="clearAllUploadedFiles"
+                                v-bind:disabled="!hasUploadedFiles"
+                                v-bind:data-tooltip="t('files.removeAll')"
+                                data-tooltip-pos="left"
+                            >
+                                <i class="icon-trash-2"></i>
+                            </button>
+                        </div>
                         <div class="file-list-empty" v-if="!hasUploadedFiles">{{ t('files.empty') }}</div>
                         <div
                             class="file-item"
@@ -223,10 +185,7 @@
                                 v-bind:data-tooltip="t('files.remove')"
                                 data-tooltip-pos="left"
                             >
-                                <svg viewBox="0 0 24 24">
-                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                </svg>
+                                <i class="icon-x"></i>
                             </button>
                         </div>
                     </div>
@@ -234,30 +193,17 @@
                     <div class="document-viewer-wrapper">
                         <div class="viewer-tabs-header">
                             <button class="tab-item" v-bind:class="{ 'is-active': activeViewerTab === 'markdown' }" v-on:click="activeViewerTab = 'markdown'">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <polyline points="14 2 14 8 20 8" />
-                                    <line x1="16" y1="13" x2="8" y2="13" />
-                                    <line x1="16" y1="17" x2="8" y2="17" />
-                                    <polyline points="10 9 9 9 8 9" />
-                                </svg>
+                                <i class="icon-hash"></i>
                                 <span>{{ t('tabs.markdown') }}</span>
                             </button>
 
                             <button class="tab-item" v-bind:class="{ 'is-active': activeViewerTab === 'preview' }" v-on:click="activeViewerTab = 'preview'">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                                    <circle cx="8.5" cy="8.5" r="1.5" />
-                                    <polyline points="21 15 16 10 5 21" />
-                                </svg>
+                                <i class="icon-image"></i>
                                 <span>{{ t('tabs.preview') }}</span>
                             </button>
 
                             <button class="tab-item" v-bind:class="{ 'is-active': activeViewerTab === 'source' }" v-on:click="activeViewerTab = 'source'">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="16 18 22 12 16 6" />
-                                    <polyline points="8 6 2 12 8 18" />
-                                </svg>
+                                <i class="icon-code-xml"></i>
                                 <span>{{ t('tabs.html') }}</span>
                             </button>
                             <div class="tab-spacer"></div>
@@ -270,16 +216,9 @@
                                         v-bind:data-tooltip="t('header.downloadOptions')"
                                         data-tooltip-pos="bottom"
                                     >
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                            <polyline points="14 2 14 8 20 8" />
-                                            <line x1="12" y1="18" x2="12" y2="12" />
-                                            <polyline points="9 15 12 18 15 15" />
-                                        </svg>
+                                        <i class="icon-download"></i>
                                         <span>{{ t('header.download') }}</span>
-                                        <svg viewBox="0 0 24 24" class="dropdown-caret" v-bind:class="{ 'is-open': isDownloadMenuOpen }">
-                                            <polyline points="6 9 12 15 18 9" />
-                                        </svg>
+                                        <i class="icon-chevron-down dropdown-caret" v-bind:class="{ 'is-open': isDownloadMenuOpen }"></i>
                                     </button>
                                     <div class="dropdown-menu" v-bind:class="{ 'is-open': isDownloadMenuOpen }">
                                         <button class="dropdown-item" v-on:click="executeDownload('pdf')">{{ t('download.pdf') }}</button>
@@ -294,11 +233,7 @@
                                     v-bind:data-tooltip="t('header.printTooltip')"
                                     data-tooltip-pos="bottom"
                                 >
-                                    <svg viewBox="0 0 24 24">
-                                        <polyline points="6 9 6 2 18 2 18 9" />
-                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                                        <rect x="6" y="14" width="12" height="8" />
-                                    </svg>
+                                    <i class="icon-printer"></i>
                                     <span>{{ t('header.print') }}</span>
                                 </button>
                                 <button
@@ -308,11 +243,8 @@
                                     v-bind:data-tooltip="t('header.copySource')"
                                     data-tooltip-pos="bottom"
                                 >
-                                    <svg viewBox="0 0 24 24" v-if="!isSourceCopied">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" />
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                                    </svg>
-                                    <svg viewBox="0 0 24 24" v-else><polyline points="20 6 9 17 4 12" /></svg>
+                                    <i class="icon-copy" v-if="!isSourceCopied"></i>
+                                    <i class="icon-check" v-else></i>
                                     <span>{{ copyButtonText }}</span>
                                 </button>
                             </div>
@@ -322,13 +254,7 @@
                             <div class="viewer-panel" v-bind:class="{ 'is-active': activeViewerTab === 'markdown' }">
                                 <div class="state-empty" v-if="!rawMarkdownContent">
                                     <div class="state-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                            <polyline points="14 2 14 8 20 8" />
-                                            <line x1="16" y1="13" x2="8" y2="13" />
-                                            <line x1="16" y1="17" x2="8" y2="17" />
-                                            <polyline points="10 9 9 9 8 9" />
-                                        </svg>
+                                        <i class="icon-hash" style="font-size: 24px"></i>
                                     </div>
                                     <div class="state-title">{{ t('viewer.markdownEmptyTitle') }}</div>
                                     <div class="state-subtitle">{{ t('viewer.markdownEmptyDesc') }}</div>
@@ -340,11 +266,7 @@
                             <div class="viewer-panel" v-bind:class="{ 'is-active': activeViewerTab === 'preview' }">
                                 <div class="state-empty" v-if="!generatedHtmlContent">
                                     <div class="state-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                                            <circle cx="8.5" cy="8.5" r="1.5" />
-                                            <polyline points="21 15 16 10 5 21" />
-                                        </svg>
+                                        <i class="icon-image" style="font-size: 24px"></i>
                                     </div>
                                     <div class="state-title">{{ t('viewer.previewEmptyTitle') }}</div>
                                     <div class="state-subtitle">{{ t('viewer.previewEmptyDesc') }}</div>
@@ -354,10 +276,7 @@
                             <div class="viewer-panel" v-bind:class="{ 'is-active': activeViewerTab === 'source' }">
                                 <div class="state-empty" v-if="!generatedHtmlContent">
                                     <div class="state-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <polyline points="16 18 22 12 16 6" />
-                                            <polyline points="8 6 2 12 8 18" />
-                                        </svg>
+                                        <i class="icon-code-xml" style="font-size: 24px"></i>
                                     </div>
                                     <div class="state-title">{{ t('viewer.htmlEmptyTitle') }}</div>
                                     <div class="state-subtitle">{{ t('viewer.htmlEmptyDesc') }}</div>
@@ -373,11 +292,8 @@
 
             <div class="toast-notification" v-bind:class="['is-' + toastNotification.type, { 'is-visible': toastNotification.isVisible }]">
                 <div class="toast-icon">
-                    <svg viewBox="0 0 24 24" v-if="toastNotification.type === 'success'"><polyline points="20 6 9 17 4 12" /></svg>
-                    <svg viewBox="0 0 24 24" v-else>
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <i class="icon-check" v-if="toastNotification.type === 'success'"></i>
+                    <i class="icon-x" v-else></i>
                 </div>
                 <span>{{ toastNotification.message }}</span>
             </div>

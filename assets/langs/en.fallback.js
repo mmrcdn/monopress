@@ -3,7 +3,6 @@ window.MonopressDefaultLangs = {
         copy: 'Copy',
         copied: 'Copied',
     },
-
     dropzone: {
         overlay: 'Drop files here',
         browse: 'Browse',
@@ -12,7 +11,6 @@ window.MonopressDefaultLangs = {
         hint: 'Drag & drop',
         clear: 'Clear all',
     },
-
     sidebar: {
         upload: 'Upload',
         settings: 'Settings',
@@ -21,7 +19,6 @@ window.MonopressDefaultLangs = {
         actions: 'Actions',
         downloadAll: 'Download all (ZIP)',
     },
-
     header: {
         toggleSidebar: 'Toggle sidebar',
         noFile: 'No file selected',
@@ -32,32 +29,28 @@ window.MonopressDefaultLangs = {
         copySource: 'Copy source',
         language: 'Language',
     },
-
     status: {
         idle: 'Idle',
         processing: 'Processing...',
         done: 'Done',
         error: 'Error',
     },
-
     files: {
         title: 'Files',
         empty: 'No files',
         remove: 'Remove',
+        removeAll: 'Remove all',
     },
-
     tabs: {
         markdown: 'Markdown',
         preview: 'Preview',
         html: 'HTML',
     },
-
     download: {
         pdf: 'Export as PDF',
         webp: 'Export as WEBP',
         html: 'Export as HTML',
     },
-
     viewer: {
         markdownEmptyTitle: 'No Markdown',
         markdownEmptyDesc: 'Select a file to view Markdown',
@@ -66,7 +59,6 @@ window.MonopressDefaultLangs = {
         htmlEmptyTitle: 'No HTML',
         htmlEmptyDesc: 'Select a file to view HTML',
     },
-
     toast: {
         htmlError: 'Failed to generate HTML for {name}',
         readError: 'Failed to read {name}',
@@ -74,36 +66,29 @@ window.MonopressDefaultLangs = {
         unsupported: 'Only .md files supported',
         cleared: 'Workspace cleared',
         downloaded: '{name} downloaded',
-
         pdfMissing: 'PDF library missing',
         pdfStart: 'Generating PDF...',
         pdfFail: 'PDF generation failed',
-
         webpMissing: 'Image library missing',
         webpStart: 'Generating WEBP...',
         webpFail: 'WEBP generation failed',
-
         zipMissing: 'ZIP library missing',
         zipStart: 'Creating ZIP...',
         zipEmpty: 'No files to zip',
         zipSuccess: '{count} files zipped',
         zipError: 'ZIP error: {msg}',
-
         copied: 'Copied',
         cors: 'Language loading requires a server environment',
     },
-
     footer: {
         copyright: '© MMR',
         powered: 'Powered by AURM',
     },
-
     theme: {
         system: 'System',
         light: 'Light',
         dark: 'Dark',
     },
-
     export: {
         zipName: 'monopress_export.zip',
     },

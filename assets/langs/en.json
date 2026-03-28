@@ -38,7 +38,8 @@
     "files": {
         "title": "Files",
         "empty": "No files",
-        "remove": "Remove"
+        "remove": "Remove",
+        "removeAll": "Remove all"
     },
     "tabs": {
         "markdown": "Markdown",

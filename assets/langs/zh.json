@@ -38,7 +38,8 @@
     "files": {
         "title": "文件",
         "empty": "无文件",
-        "remove": "移除"
+        "remove": "移除",
+        "removeAll": "移除所有"
     },
     "tabs": {
         "markdown": "Markdown",

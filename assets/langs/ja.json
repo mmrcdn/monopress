@@ -38,7 +38,8 @@
     "files": {
         "title": "ファイル",
         "empty": "ファイルなし",
-        "remove": "削除"
+        "remove": "削除",
+        "removeAll": "すべて削除"
     },
     "tabs": {
         "markdown": "Markdown",

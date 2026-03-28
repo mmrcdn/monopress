@@ -38,7 +38,8 @@
     "files": {
         "title": "파일",
         "empty": "파일 없음",
-        "remove": "빼기"
+        "remove": "삭제",
+        "removeAll": "모두 삭제"
     },
     "tabs": {
         "markdown": "Markdown",

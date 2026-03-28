@@ -1,6 +1,15 @@
-# Monopress
+<div align="center">
+  <h1>Monopress</h1>
+  <p><b>Instantly render, preview, and export Markdown (.md) documents into print-optimized, monotone formats.</b></p>
 
-Instantly render, preview, and export Markdown (.md) documents into print-optimized, monotone formats.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+  <br>
+  <a href="[https://mmrcdn.github.io/monopress/]"><strong>Launch Monopress in Browser</strong></a>
+  <br><br>
+</div>
+
+<br>
 
 ## Motivation
 
@@ -95,6 +104,9 @@ initiate a discussion.
 
 ## License
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Distributed under the MIT License. See the `LICENSE` file for detailed information.
+
+<br>
+<div align="center">
+  <i>Powered by AURM & MMR</i>
+</div>
