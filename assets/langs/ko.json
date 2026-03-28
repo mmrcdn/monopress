@@ -41,8 +41,8 @@
         "remove": "빼기"
     },
     "tabs": {
-        "markdown": "마크다운",
-        "preview": "미리보기",
+        "markdown": "Markdown",
+        "preview": "Preview",
         "html": "HTML"
     },
     "download": {
