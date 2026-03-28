@@ -1,0 +1,94 @@
+{
+    "common": {
+        "copy": "复制",
+        "copied": "已复制"
+    },
+    "dropzone": {
+        "overlay": "将文件拖放到此处",
+        "fileSelect": "选择文件",
+        "selectFiles": "选择 *.md 文件",
+        "filesLoaded": "已加载 {count} 个文件",
+        "dragDrop": "拖放",
+        "clearAll": "全部清除"
+    },
+    "sidebar": {
+        "upload": "上传",
+        "globalOptions": "全局选项",
+        "stylesheet": "样式表 (CSS URL)",
+        "stylesheetPlaceholder": "应用默认主题",
+        "actions": "操作",
+        "downloadAll": "全部下载 (ZIP)"
+    },
+    "header": {
+        "sidebarToggle": "切换侧边栏",
+        "noSelection": "未选择",
+        "downloadOptions": "下载选项",
+        "download": "下载",
+        "printTitle": "打印文档",
+        "print": "打印",
+        "copySourceTitle": "复制源代码",
+        "languageOptions": "更改语言"
+    },
+    "status": {
+        "idle": "等待中...",
+        "converting": "转换中...",
+        "ready": "完成",
+        "error": "发生错误"
+    },
+    "fileList": {
+        "stack": "文件栈",
+        "noFiles": "未添加文件",
+        "deleteTitle": "删除"
+    },
+    "tabs": {
+        "markdown": "Markdown",
+        "preview": "预览",
+        "html": "HTML"
+    },
+    "downloadMenu": {
+        "pdf": "下载为 PDF",
+        "webp": "下载为 WEBP",
+        "html": "下载为 HTML"
+    },
+    "viewer": {
+        "noMarkdownTitle": "无 Markdown",
+        "noMarkdownDesc": "选择一个文件以查看原始 Markdown",
+        "noPreviewTitle": "暂无预览",
+        "noPreviewDesc": "从列表中选择一个文件进行查看",
+        "noSourceTitle": "无源代码",
+        "noSourceDesc": "选择一个文件以查看 HTML 源代码"
+    },
+    "toast": {
+        "errorGenerateHtml": "生成 {name} 的 HTML 时出错",
+        "errorReadFile": "读取 {name} 时出错",
+        "filesLoaded": "已加载 {count} 个文件",
+        "unsupportedFile": "仅支持 .md 文件",
+        "workspaceCleared": "工作区已清空",
+        "fileDownloaded": "{name} 已下载",
+        "pdfLibMissing": "缺少 PDF 渲染库。",
+        "pdfStart": "开始转换为 PDF...",
+        "pdfFail": "PDF 生成失败。",
+        "webpLibMissing": "缺少图像渲染库。",
+        "webpStart": "开始转换为 WEBP...",
+        "webpFail": "WEBP 生成失败。",
+        "zipLibMissing": "缺少 JSZip 库。",
+        "zipStart": "正在压缩文件...",
+        "zipNoFiles": "没有可压缩的就绪文件。",
+        "zipSuccess": "已将 {count} 个文件导出为 ZIP",
+        "zipError": "ZIP 错误: {msg}",
+        "copied": "已复制到剪贴板",
+        "corsError": "只能在服务器环境中加载其他语言。"
+    },
+    "footer": {
+        "copyright": "© MMR",
+        "poweredBy": "Powered by AURM"
+    },
+    "theme": {
+        "system": "系统",
+        "light": "浅色",
+        "dark": "深色"
+    },
+    "export": {
+        "defaultZipName": "monopress_export.zip"
+    }
+}

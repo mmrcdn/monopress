@@ -1,11 +1,10 @@
 /**
- * Set marked.js options for correct Markdown parsing.
+ * @fileoverview Monopress application logic using Vue 3 Composition API, Vue-i18n & Lodash.
+ * @version 1.2.0
  */
+
 marked.setOptions({ gfm: true, breaks: false });
 
-/**
- * Custom renderer for marked to encode anchor IDs natively.
- */
 const renderer = new marked.Renderer();
 renderer.heading = function (text, level) {
     const headingText = typeof text === 'string' ? text : text.text;
@@ -13,445 +12,588 @@ renderer.heading = function (text, level) {
     const escapedText = encodeURIComponent(headingText.replace(/<[^>]*>?/gm, '').trim());
     return `<h${headingLevel} id="${escapedText}">${headingText}</h${headingLevel}>\n`;
 };
-marked.use({ renderer });
+marked.use({ renderer: renderer });
 
-const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+const DEFAULT_STYLESHEET_URL = 'https://mmrcdn.github.io/monopress/ui@markdown.css';
+const LOCAL_STORAGE_THEME_KEY = 'monopress-theme-preference';
+const LOCAL_STORAGE_LANG_KEY = 'monopress-lang-preference';
+
+const { createApp, ref, computed, watch, onMounted, onUnmounted } = Vue;
+const { createI18n, useI18n } = VueI18n;
+
+// Initialize empty i18n instance. Default is English.
+const i18n = createI18n({
+    legacy: false,
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en: window.MonopressDefaultLangs || {},
+    },
+});
 
 createApp({
     /**
      * Setup composition logic for the application.
-     * @returns {Object} Reactive variables and functions exposed to template.
+     * @returns {Object} Reactive variables and functions exposed to the template.
      */
     setup() {
-        // Refs
-        /** * @typedef {Object} FileItem
-         * @property {string} id Unique identifier
-         * @property {File} file Original File object
-         * @property {string} title Formatted title
-         * @property {string} rawMd Original markdown string
-         * @property {string} finalHtml Converted HTML result
-         * @property {'idle'|'ready'|'converting'|'error'} status Conversion status
-         */
+        const { t, locale, setLocaleMessage, availableLocales } = useI18n();
 
-        /** @type {import('vue').Ref<FileItem[]>} */
-        const files = ref([]);
-
-        /** @type {import('vue').Ref<string|null>} */
-        const activeFileId = ref(null);
-
-        /** @type {import('vue').Ref<boolean>} */
-        const isDragging = ref(false);
-
-        /** @type {import('vue').Ref<boolean>} */
+        const VERSION = ref('1.2.0');
+        const uploadedFiles = ref([]);
+        const selectedFileId = ref(null);
+        const isDragOverDropzone = ref(false);
         const isSidebarOpen = ref(true);
+        const activeViewerTab = ref('preview');
+        const isSourceCopied = ref(false);
+        const isDownloadMenuOpen = ref(false);
+        const downloadMenuRef = ref(null);
+        const previewIframeRef = ref(null);
+        const currentLocale = ref('en');
 
-        /** @type {import('vue').Ref<'markdown'|'preview'|'source'>} */
-        const activeTab = ref('preview'); // 기본 탭은 미리보기로 유지
+        // Language Dropdown States
+        const isLangMenuOpen = ref(false);
+        const langMenuRef = ref(null);
 
-        /** @type {import('vue').Ref<boolean>} */
-        const copied = ref(false);
-
-        /** @type {import('vue').Ref<HTMLIFrameElement|null>} */
-        const previewFrameRef = ref(null);
-
-        // Global Options
-        const options = ref({
-            cssUrl: 'https://mmrcdn.github.io/monopress/ui@markdown.css',
+        const globalSettings = ref({
+            stylesheetUrl: '',
         });
 
-        // Theme Management
-        const THEME_KEY = 'md-converter-theme-vue';
-        /** @type {import('vue').Ref<'system'|'light'|'dark'>} */
-        const theme = ref(localStorage.getItem(THEME_KEY) || 'system');
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = ref(localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || 'system');
+        const systemDarkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-        // Toast Management
-        const toastData = ref({
+        const toastNotification = ref({
             message: '',
             type: 'success',
-            visible: false,
+            isVisible: false,
         });
-        let toastTimer = null;
-        let dragCounter = 0;
 
+        let dragEventCounter = 0;
+
+        const localeNames = {
+            en: 'English',
+            ko: '한국어',
+            ja: '日本語',
+            zh: '中文',
+        };
+
+        // ==========================================
         // Computed Properties
+        // ==========================================
 
-        /**
-         * Get the currently active file object.
-         * @returns {FileItem|undefined}
-         */
-        const activeFile = computed(() => files.value.find((f) => f.id === activeFileId.value));
+        const hasUploadedFiles = computed(() => !_.isEmpty(uploadedFiles.value));
+        const selectedFile = computed(() => _.find(uploadedFiles.value, ['id', selectedFileId.value]));
+        const rawMarkdownContent = computed(() => _.get(selectedFile.value, 'rawMarkdownContent', ''));
+        const generatedHtmlContent = computed(() => _.get(selectedFile.value, 'generatedHtmlContent', ''));
 
-        /**
-         * Raw Markdown text of the active file.
-         * @returns {string}
-         */
-        const rawMarkdown = computed(() => activeFile.value?.rawMd || '');
-
-        /**
-         * Final HTML of the active file.
-         * @returns {string}
-         */
-        const finalHtml = computed(() => activeFile.value?.finalHtml || '');
-
-        /**
-         * Global or active file status.
-         * @returns {'idle'|'ready'|'converting'|'error'}
-         */
-        const status = computed(() => activeFile.value?.status || 'idle');
-
-        /**
-         * Human readable status text.
-         * @returns {string}
-         */
-        const statusText = computed(() => {
-            if (files.value.length > 0 && !activeFile.value) return 'No selection';
-            const map = {
-                idle: `Waiting...`,
-                converting: `Converting...`,
-                ready: `Complete`,
-                error: `An error occurred`,
-            };
-            return map[status.value] || map.idle;
+        const dropzoneTitleText = computed(() => {
+            return hasUploadedFiles.value ? t('dropzone.filesLoaded', { count: uploadedFiles.value.length }) : t('dropzone.selectFiles');
         });
 
-        // Methods
+        const copyButtonText = computed(() => (isSourceCopied.value ? t('common.copied') : t('common.copy')));
+
+        const currentLocaleName = computed(() => localeNames[currentLocale.value] || 'English');
+
+        // ==========================================
+        // i18n Logic (Lazy Loading)
+        // ==========================================
 
         /**
-         * Toggles the visibility state of the sidebar.
-         * @returns {void}
+         * Dynamically loads a language pack from the server.
+         * @param {string} lang The target locale code (en, ko, ja, zh).
+         * @returns {Promise<void>}
          */
-        const toggleSidebar = () => {
-            isSidebarOpen.value = !isSidebarOpen.value;
-        };
+        const loadLanguageAsync = async (lang) => {
+            if (availableLocales.includes(lang)) {
+                locale.value = lang;
+                currentLocale.value = lang;
+                return;
+            }
 
-        /**
-         * Displays a toast notification in the application viewport.
-         * @param {string} msg The message to display.
-         * @param {'success'|'error'|'info'|'warning'} type The severity type of the toast.
-         * @returns {void}
-         */
-        const showToast = (msg, type = 'success') => {
-            clearTimeout(toastTimer);
-            toastData.value = { message: msg, type, visible: true };
-            toastTimer = setTimeout(() => {
-                toastData.value.visible = false;
-            }, 2800);
-        };
+            try {
+                const response = await fetch(`./assets/langs/${lang}.json`);
+                if (!response.ok) throw new Error('Locale file not found.');
 
-        /**
-         * Formats byte size into human readable string.
-         * @param {number} bytes File size in bytes.
-         * @returns {string} Formatted size (KB/MB).
-         */
-        const formatSize = (bytes) => {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        };
+                const messages = await response.json();
+                setLocaleMessage(lang, messages);
 
-        /**
-         * Converts a single file item from Markdown to HTML.
-         * @param {FileItem} item The reactive file item reference.
-         * @returns {void}
-         */
-        const convertSingleFile = (item) => {
-            item.status = 'converting';
-            const reader = new FileReader();
+                locale.value = lang;
+                currentLocale.value = lang;
+                localStorage.setItem(LOCAL_STORAGE_LANG_KEY, lang);
+            } catch (error) {
+                console.warn('CORS Error (Local env). Please run on a web server to load other languages.');
+                showToastNotification(t('toast.corsError'), 'warning');
 
-            reader.onload = (e) => {
-                try {
-                    const rawMd = e.target.result;
-                    item.rawMd = rawMd; // 마크다운 원본 저장
-
-                    const cssStr = options.value.cssUrl.trim() || 'https://mmrcdn.github.io/monopress/ui@markdown.css';
-                    const bodyHtml = marked.parse(rawMd);
-
-                    const skeleton = [
-                        '<!doctype html>',
-                        '<html>',
-                        '    <head>',
-                        `        <title>${escapeHtml(item.title)}</title>`,
-                        `        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />`,
-                        `        <link rel="stylesheet" href="${escapeHtml(cssStr)}" />`,
-                        '    </head>',
-                        '    <body>',
-                        bodyHtml,
-                        '    </body>',
-                        '</html>',
-                    ].join('\n');
-
-                    item.finalHtml = html_beautify(skeleton, {
-                        indent_size: 4,
-                        indent_char: ' ',
-                        max_preserve_newlines: 1,
-                        preserve_newlines: true,
-                        indent_inner_html: false,
-                        wrap_line_length: 0,
-                        end_with_newline: false,
-                        extra_liners: ['head', 'body', '/html'],
-                    });
-
-                    item.status = 'ready';
-                } catch (err) {
-                    item.status = 'error';
-                    showToast('Error converting ' + item.title, 'error');
-                }
-            };
-
-            reader.readAsText(item.file, 'UTF-8');
-        };
-
-        /**
-         * Processes and loads incoming file references into the stack.
-         * @param {FileList|File[]} fileList The file(s) to load.
-         * @returns {void}
-         */
-        const loadFiles = (fileList) => {
-            if (!fileList || fileList.length === 0) return;
-
-            let addedCount = 0;
-            Array.from(fileList).forEach((selectedFile) => {
-                if (selectedFile.name.endsWith('.md') || selectedFile.type === 'text/markdown' || selectedFile.type === 'text/plain') {
-                    const newId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    const newItem = {
-                        id: newId,
-                        file: selectedFile,
-                        title: selectedFile.name.replace(/\.md$/i, ''),
-                        rawMd: '',
-                        finalHtml: '',
-                        status: 'idle',
-                    };
-
-                    // 버그 수정: 반응형(Proxy) 객체를 가져오기 위해 배열 푸시 후 인덱스로 접근
-                    const newIndex = files.value.push(newItem) - 1;
-                    const reactiveItem = files.value[newIndex];
-
-                    addedCount++;
-
-                    // If it's the first file, auto select it
-                    if (!activeFileId.value) activeFileId.value = newId;
-
-                    // Begin conversion using the reactive item
-                    convertSingleFile(reactiveItem);
-                }
-            });
-
-            if (addedCount > 0) {
-                showToast(`${addedCount} files loaded`, 'success');
-                if (window.innerWidth < 1024) isSidebarOpen.value = false;
-            } else {
-                showToast('Only .md files are supported', 'error');
+                locale.value = 'en';
+                currentLocale.value = 'en';
             }
         };
 
         /**
-         * Re-converts all files (Useful when global CSS option changes).
+         * Triggers language change.
+         * @param {string} lang Target locale code.
          * @returns {void}
          */
-        const reconvertAll = () => {
-            files.value.forEach((item) => convertSingleFile(item));
-            showToast('Applied global options to all files', 'success');
+        const changeLocale = (lang) => {
+            loadLanguageAsync(lang);
+        };
+
+        // ==========================================
+        // Helpers & Methods
+        // ==========================================
+
+        const hideToastDebounced = _.debounce(() => {
+            toastNotification.value.isVisible = false;
+        }, 2800);
+
+        const debouncedReconvertAllFiles = _.debounce(() => {
+            if (hasUploadedFiles.value) {
+                _.forEach(uploadedFiles.value, (item) => generateHtmlFromMarkdown(item));
+            }
+        }, 300);
+
+        watch(() => globalSettings.value.stylesheetUrl, debouncedReconvertAllFiles);
+
+        /**
+         * Toggles the sidebar visibility.
+         * @returns {void}
+         */
+        const toggleSidebarVisibility = () => {
+            isSidebarOpen.value = !isSidebarOpen.value;
         };
 
         /**
-         * Event handler for standard file input change.
-         * @param {Event} e DOM event.
+         * Toggles the download dropdown menu.
+         * Closes language menu if opened.
          * @returns {void}
          */
-        const handleFileInput = (e) => loadFiles(e.target.files);
+        const toggleDownloadMenu = () => {
+            isDownloadMenuOpen.value = !isDownloadMenuOpen.value;
+            if (isDownloadMenuOpen.value) isLangMenuOpen.value = false;
+        };
 
         /**
-         * Removes a specific file from the stack.
-         * @param {string} id The file id to remove.
+         * Toggles the language selection dropdown menu.
+         * Closes download menu if opened.
          * @returns {void}
          */
-        const removeFile = (id) => {
-            const index = files.value.findIndex((f) => f.id === id);
-            if (index > -1) {
-                files.value.splice(index, 1);
-                if (activeFileId.value === id) {
-                    // Select next or prev item
-                    if (files.value.length > 0) {
-                        activeFileId.value = files.value[Math.min(index, files.value.length - 1)].id;
+        const toggleLangMenu = () => {
+            isLangMenuOpen.value = !isLangMenuOpen.value;
+            if (isLangMenuOpen.value) isDownloadMenuOpen.value = false;
+        };
+
+        /**
+         * Selects a specific locale and closes the language menu.
+         * @param {string} lang Target locale code.
+         * @returns {void}
+         */
+        const selectLocale = (lang) => {
+            changeLocale(lang);
+            isLangMenuOpen.value = false;
+        };
+
+        /**
+         * Closes active dropdown menus when clicking outside of their references.
+         * @param {Event} event The DOM click event.
+         * @returns {void}
+         */
+        const closeDropdownsOnClickOutside = (event) => {
+            if (isDownloadMenuOpen.value && downloadMenuRef.value && !downloadMenuRef.value.contains(event.target)) {
+                isDownloadMenuOpen.value = false;
+            }
+            if (isLangMenuOpen.value && langMenuRef.value && !langMenuRef.value.contains(event.target)) {
+                isLangMenuOpen.value = false;
+            }
+        };
+
+        /**
+         * Displays a toast notification with a specific message and type.
+         * @param {string} message The notification message.
+         * @param {string} [type='success'] The notification type (success, warning, error, info).
+         * @returns {void}
+         */
+        const showToastNotification = (message, type = 'success') => {
+            toastNotification.value = { message, type, isVisible: true };
+            hideToastDebounced();
+        };
+
+        /**
+         * Formats file size in bytes to a human-readable string.
+         * @param {number} bytes The file size in bytes.
+         * @returns {string} Formatted size string (e.g., "1.5 MB").
+         */
+        const formatFileByteSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const index = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, index)).toFixed(1)) + ' ' + sizes[index];
+        };
+
+        /**
+         * Converts raw markdown content to beautified HTML.
+         * @param {Object} fileItem The target file item object.
+         * @returns {void}
+         */
+        const generateHtmlFromMarkdown = (fileItem) => {
+            if (!fileItem.rawMarkdownContent) return;
+
+            fileItem.conversionStatus = 'converting';
+
+            try {
+                const appliedStylesheetUrl = _.trim(globalSettings.value.stylesheetUrl) || DEFAULT_STYLESHEET_URL;
+                const parsedBodyHtml = marked.parse(fileItem.rawMarkdownContent);
+
+                const htmlSkeleton = [
+                    '<!doctype html>',
+                    '<html>',
+                    '    <head>',
+                    `        <title>${_.escape(fileItem.displayTitle)}</title>`,
+                    `        <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />`,
+                    `        <link rel="stylesheet" href="${_.escape(appliedStylesheetUrl)}" />`,
+                    '    </head>',
+                    '    <body>',
+                    parsedBodyHtml,
+                    '    </body>',
+                    '</html>',
+                ].join('\n');
+
+                fileItem.generatedHtmlContent = html_beautify(htmlSkeleton, {
+                    indent_size: 4,
+                    indent_char: ' ',
+                    max_preserve_newlines: 1,
+                    preserve_newlines: true,
+                    indent_inner_html: false,
+                    wrap_line_length: 0,
+                    end_with_newline: false,
+                    extra_liners: ['head', 'body', '/html'],
+                });
+
+                fileItem.conversionStatus = 'ready';
+            } catch (error) {
+                fileItem.conversionStatus = 'error';
+                showToastNotification(t('toast.errorGenerateHtml', { name: fileItem.displayTitle }), 'error');
+            }
+        };
+
+        /**
+         * Reads the local file as text and triggers conversion.
+         * @param {Object} fileItem The target file item object.
+         * @returns {void}
+         */
+        const readAndConvertFile = (fileItem) => {
+            fileItem.conversionStatus = 'converting';
+            const fileReader = new FileReader();
+
+            fileReader.onload = (event) => {
+                fileItem.rawMarkdownContent = event.target.result;
+                generateHtmlFromMarkdown(fileItem);
+            };
+
+            fileReader.onerror = () => {
+                fileItem.conversionStatus = 'error';
+                showToastNotification(t('toast.errorReadFile', { name: fileItem.displayTitle }), 'error');
+            };
+
+            fileReader.readAsText(fileItem.originalFile, 'UTF-8');
+        };
+
+        /**
+         * Processes incoming file objects from input or drop events.
+         * @param {FileList|Array} targetFiles The files to process.
+         * @returns {void}
+         */
+        const processIncomingFiles = (targetFiles) => {
+            if (_.isEmpty(targetFiles)) return;
+
+            let successfulLoadCount = 0;
+
+            _.forEach(targetFiles, (selectedFile) => {
+                const isValidMarkdownFile = _.endsWith(selectedFile.name, '.md') || selectedFile.type === 'text/markdown' || selectedFile.type === 'text/plain';
+
+                if (isValidMarkdownFile) {
+                    const uniqueFileId = _.uniqueId('file_') + '_' + Date.now().toString(36);
+
+                    const newFileItem = {
+                        id: uniqueFileId,
+                        originalFile: selectedFile,
+                        displayTitle: selectedFile.name.trim(),
+                        rawMarkdownContent: '',
+                        generatedHtmlContent: '',
+                        conversionStatus: 'idle',
+                    };
+
+                    uploadedFiles.value.push(newFileItem);
+                    successfulLoadCount++;
+
+                    if (!selectedFileId.value) selectedFileId.value = uniqueFileId;
+
+                    readAndConvertFile(_.last(uploadedFiles.value));
+                }
+            });
+
+            if (successfulLoadCount > 0) {
+                showToastNotification(t('toast.filesLoaded', { count: successfulLoadCount }), 'success');
+                if (window.innerWidth < 1024) isSidebarOpen.value = false;
+            } else {
+                showToastNotification(t('toast.unsupportedFile'), 'error');
+            }
+        };
+
+        const handleFileInputChange = (event) => processIncomingFiles(_.get(event, 'target.files'));
+
+        /**
+         * Removes a specific file from the stack by ID.
+         * @param {string} targetId The ID of the file to remove.
+         * @returns {void}
+         */
+        const removeFileFromStack = (targetId) => {
+            const fileIndex = _.findIndex(uploadedFiles.value, ['id', targetId]);
+
+            if (fileIndex > -1) {
+                _.pullAt(uploadedFiles.value, fileIndex);
+
+                if (selectedFileId.value === targetId) {
+                    if (!_.isEmpty(uploadedFiles.value)) {
+                        const fallbackIndex = Math.min(fileIndex, uploadedFiles.value.length - 1);
+                        selectedFileId.value = _.get(uploadedFiles.value, `[${fallbackIndex}].id`);
                     } else {
-                        activeFileId.value = null;
-                        activeTab.value = 'preview';
+                        selectedFileId.value = null;
+                        activeViewerTab.value = 'preview';
                     }
                 }
             }
         };
 
         /**
-         * Clears all files from the workspace.
+         * Clears all uploaded files from the workspace.
          * @returns {void}
          */
-        const clearAllFiles = () => {
-            files.value = [];
-            activeFileId.value = null;
-            activeTab.value = 'preview';
-            showToast('Workspace cleared', 'info');
+        const clearAllUploadedFiles = () => {
+            uploadedFiles.value = [];
+            selectedFileId.value = null;
+            activeViewerTab.value = 'preview';
+            showToastNotification(t('toast.workspaceCleared'), 'info');
         };
 
         /**
-         * Triggers a download sequence of the generated HTML for the ACTIVE file.
-         * @returns {void}
-         */
-        const downloadHtml = () => {
-            if (!activeFile.value || !finalHtml.value) return;
-
-            const name = activeFile.value.title + '.html';
-            const blob = new Blob([finalHtml.value], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-            showToast(`${name} downloaded`, 'success');
-        };
-
-        /**
-         * Compresses all converted HTML files into a ZIP and triggers download.
+         * Executes the download process based on the requested type.
+         * @param {string} type 'pdf', 'webp', or 'html'.
          * @returns {Promise<void>}
          */
-        const downloadZip = async () => {
-            if (files.value.length === 0) return;
+        const executeDownload = async (type) => {
+            isDownloadMenuOpen.value = false;
 
-            // Ensure JSZip is loaded
-            if (typeof JSZip === 'undefined') {
-                showToast('JSZip library is missing', 'error');
+            if (type === 'pdf') await downloadSinglePdfFile();
+            else if (type === 'webp') await downloadSingleWebpFile();
+            else if (type === 'html') downloadSingleHtmlFile();
+        };
+
+        const downloadSingleHtmlFile = () => {
+            if (!selectedFile.value || !generatedHtmlContent.value) return;
+
+            const targetFileName = selectedFile.value.displayTitle + '.html';
+            const htmlBlob = new Blob([generatedHtmlContent.value], { type: 'text/html;charset=utf-8' });
+            const temporaryDownloadUrl = URL.createObjectURL(htmlBlob);
+
+            const anchorElement = document.createElement('a');
+            anchorElement.href = temporaryDownloadUrl;
+            anchorElement.download = targetFileName;
+
+            document.body.appendChild(anchorElement);
+            anchorElement.click();
+            document.body.removeChild(anchorElement);
+
+            URL.revokeObjectURL(temporaryDownloadUrl);
+            showToastNotification(t('toast.fileDownloaded', { name: targetFileName }), 'success');
+        };
+
+        const downloadSinglePdfFile = async () => {
+            if (!selectedFile.value || !generatedHtmlContent.value) return;
+
+            if (_.isUndefined(window.html2pdf)) {
+                showToastNotification(t('toast.pdfLibMissing'), 'error');
                 return;
             }
 
-            showToast('Compressing files...', 'info');
-            const zip = new JSZip();
-            let addedCount = 0;
+            showToastNotification(t('toast.pdfStart'), 'info');
 
-            files.value.forEach((item) => {
-                if (item.status === 'ready' && item.finalHtml) {
-                    zip.file(`${item.title}.html`, item.finalHtml);
-                    addedCount++;
+            try {
+                const iframeDocument = _.get(previewIframeRef.value, 'contentDocument');
+                if (!iframeDocument) throw new Error('Preview iframe is not accessible.');
+
+                const fileName = `${selectedFile.value.displayTitle}.pdf`;
+                const pdfOptions = {
+                    margin: [10, 10, 10, 10],
+                    filename: fileName,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: currentTheme.value === 'dark' ? '#101014' : '#ffffff' },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                };
+
+                await html2pdf().set(pdfOptions).from(iframeDocument.body).save();
+                showToastNotification(t('toast.fileDownloaded', { name: fileName }), 'success');
+            } catch (error) {
+                showToastNotification(t('toast.pdfFail'), 'error');
+            }
+        };
+
+        const downloadSingleWebpFile = async () => {
+            if (!selectedFile.value || !generatedHtmlContent.value) return;
+
+            if (_.isUndefined(window.html2canvas)) {
+                showToastNotification(t('toast.webpLibMissing'), 'error');
+                return;
+            }
+
+            showToastNotification(t('toast.webpStart'), 'info');
+
+            try {
+                const iframeDocument = _.get(previewIframeRef.value, 'contentDocument');
+                if (!iframeDocument) throw new Error('Preview iframe is not accessible.');
+
+                const targetElement = iframeDocument.documentElement;
+                const canvas = await html2canvas(targetElement, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    windowWidth: targetElement.scrollWidth,
+                    windowHeight: targetElement.scrollHeight,
+                    backgroundColor: currentTheme.value === 'dark' ? '#101014' : '#ffffff',
+                });
+
+                const webpDataUrl = canvas.toDataURL('image/webp', 0.95);
+                const fileName = `${selectedFile.value.displayTitle}.webp`;
+
+                const anchorElement = document.createElement('a');
+                anchorElement.href = webpDataUrl;
+                anchorElement.download = fileName;
+
+                document.body.appendChild(anchorElement);
+                anchorElement.click();
+                _.delay(() => document.body.removeChild(anchorElement), 100);
+
+                showToastNotification(t('toast.fileDownloaded', { name: fileName }), 'success');
+            } catch (error) {
+                showToastNotification(t('toast.webpFail'), 'error');
+            }
+        };
+
+        const downloadAllFilesAsZip = async () => {
+            if (!hasUploadedFiles.value) return;
+
+            if (_.isUndefined(window.JSZip)) {
+                showToastNotification(t('toast.zipLibMissing'), 'error');
+                return;
+            }
+
+            showToastNotification(t('toast.zipStart'), 'info');
+            const zipInstance = new JSZip();
+            let archivedFilesCount = 0;
+
+            _.forEach(uploadedFiles.value, (fileItem) => {
+                if (fileItem.conversionStatus === 'ready' && fileItem.generatedHtmlContent) {
+                    zipInstance.file(`${fileItem.displayTitle}.html`, fileItem.generatedHtmlContent);
+                    archivedFilesCount++;
                 }
             });
 
-            if (addedCount === 0) {
-                showToast('No ready files to compress.', 'warning');
+            if (archivedFilesCount === 0) {
+                showToastNotification(t('toast.zipNoFiles'), 'warning');
                 return;
             }
 
             try {
-                const content = await zip.generateAsync({ type: 'blob' });
-                const url = URL.createObjectURL(content);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'monopress_export.zip';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+                const zipBlobContent = await zipInstance.generateAsync({ type: 'blob' });
+                const temporaryZipUrl = URL.createObjectURL(zipBlobContent);
 
-                showToast(`Exported ${addedCount} files as ZIP`, 'success');
-            } catch (err) {
-                showToast('ZIP Error: ' + err.message, 'error');
+                const anchorElement = document.createElement('a');
+                anchorElement.href = temporaryZipUrl;
+                anchorElement.download = t('export.defaultZipName') || 'monopress_export.zip';
+
+                document.body.appendChild(anchorElement);
+                anchorElement.click();
+                document.body.removeChild(anchorElement);
+
+                URL.revokeObjectURL(temporaryZipUrl);
+                showToastNotification(t('toast.zipSuccess', { count: archivedFilesCount }), 'success');
+            } catch (error) {
+                showToastNotification(t('toast.zipError', { msg: error.message }), 'error');
             }
         };
 
-        /**
-         * Copies the active raw HTML source code into the user's clipboard.
-         * @returns {void}
-         */
-        const copySource = () => {
-            if (!finalHtml.value) return;
+        const copyHtmlSourceToClipboard = () => {
+            if (!generatedHtmlContent.value) return;
 
-            navigator.clipboard.writeText(finalHtml.value).then(() => {
-                copied.value = true;
-                showToast('Copied', 'success');
+            navigator.clipboard.writeText(generatedHtmlContent.value).then(() => {
+                isSourceCopied.value = true;
+                showToastNotification(t('toast.copied'), 'success');
+
                 setTimeout(() => {
-                    copied.value = false;
+                    isSourceCopied.value = false;
                 }, 2000);
             });
         };
 
-        /**
-         * Triggers the browser's print dialog localized to the preview iframe.
-         * @returns {void}
-         */
-        const printPreview = () => {
-            if (previewFrameRef.value && previewFrameRef.value.contentWindow) {
-                previewFrameRef.value.contentWindow.focus();
-                previewFrameRef.value.contentWindow.print();
+        const printHtmlPreview = () => {
+            const iframeWindow = _.get(previewIframeRef.value, 'contentWindow');
+            if (iframeWindow) {
+                iframeWindow.focus();
+                iframeWindow.print();
             }
         };
 
-        /**
-         * Updates the HTML document theme attribute and saves preference.
-         * @param {'system'|'light'|'dark'} val - The theme preference identifier.
-         * @returns {void}
-         */
-        const setTheme = (val) => {
-            theme.value = val;
-            localStorage.setItem(THEME_KEY, val);
-            applyTheme();
+        const applyThemeToDocument = () => {
+            const resolvedTheme = currentTheme.value === 'system' ? (systemDarkModeQuery.matches ? 'dark' : 'light') : currentTheme.value;
+            document.documentElement.setAttribute('data-theme', resolvedTheme);
         };
 
-        /**
-         * Resolves and sets the active visual theme on the DOM element.
-         * @returns {void}
-         */
-        const applyTheme = () => {
-            const effective = theme.value === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : theme.value;
-            document.documentElement.setAttribute('data-theme', effective);
+        const changeApplicationTheme = (themePreference) => {
+            currentTheme.value = themePreference;
+            localStorage.setItem(LOCAL_STORAGE_THEME_KEY, themePreference);
+            applyThemeToDocument();
         };
 
-        /**
-         * Escapes potentially dangerous characters for safe HTML attribute injection.
-         * @param {string} s - Original unsafe string.
-         * @returns {string} Sanitized string.
-         */
-        const escapeHtml = (s) => {
-            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        };
-
-        // Global Drag & Drop Handlers
+        // --- Drag & Drop Event Handlers ---
         const handleGlobalDragEnter = (e) => {
             e.preventDefault();
-            dragCounter++;
-            isDragging.value = true;
+            dragEventCounter++;
+            isDragOverDropzone.value = true;
         };
         const handleGlobalDragLeave = (e) => {
             e.preventDefault();
-            dragCounter--;
-            if (dragCounter === 0) isDragging.value = false;
+            dragEventCounter--;
+            if (dragEventCounter === 0) isDragOverDropzone.value = false;
         };
         const handleGlobalDragOver = (e) => {
             e.preventDefault();
         };
         const handleGlobalDrop = (e) => {
             e.preventDefault();
-            dragCounter = 0;
-            isDragging.value = false;
-            if (e.dataTransfer && e.dataTransfer.files) {
-                loadFiles(e.dataTransfer.files);
-            }
+            dragEventCounter = 0;
+            isDragOverDropzone.value = false;
+            const droppedFiles = _.get(e, 'dataTransfer.files');
+            if (droppedFiles) processIncomingFiles(droppedFiles);
         };
 
-        // Lifecycle Hooks
         onMounted(() => {
-            applyTheme();
-            mediaQuery.addEventListener('change', () => {
-                if (theme.value === 'system') applyTheme();
+            applyThemeToDocument();
+
+            const savedLang = localStorage.getItem(LOCAL_STORAGE_LANG_KEY) || 'en';
+
+            if (savedLang !== 'en') {
+                loadLanguageAsync(savedLang);
+            }
+
+            systemDarkModeQuery.addEventListener('change', () => {
+                if (currentTheme.value === 'system') applyThemeToDocument();
             });
             window.addEventListener('dragenter', handleGlobalDragEnter);
             window.addEventListener('dragleave', handleGlobalDragLeave);
             window.addEventListener('dragover', handleGlobalDragOver);
             window.addEventListener('drop', handleGlobalDrop);
+
+            document.addEventListener('click', closeDropdownsOnClickOutside);
         });
 
         onUnmounted(() => {
@@ -459,35 +601,58 @@ createApp({
             window.removeEventListener('dragleave', handleGlobalDragLeave);
             window.removeEventListener('dragover', handleGlobalDragOver);
             window.removeEventListener('drop', handleGlobalDrop);
+
+            document.removeEventListener('click', closeDropdownsOnClickOutside);
         });
 
         return {
-            files,
-            activeFileId,
-            activeFile,
-            isDragging,
+            VERSION,
+            uploadedFiles,
+            selectedFileId,
+            isDragOverDropzone,
             isSidebarOpen,
-            options,
-            rawMarkdown,
-            finalHtml,
-            status,
-            activeTab,
-            theme,
-            copied,
-            previewFrameRef,
-            statusText,
-            toastData,
-            formatSize,
-            toggleSidebar,
-            handleFileInput,
-            removeFile,
-            clearAllFiles,
-            downloadHtml,
-            downloadZip,
-            copySource,
-            printPreview,
-            setTheme,
-            reconvertAll,
+            activeViewerTab,
+            globalSettings,
+            currentTheme,
+            previewIframeRef,
+            toastNotification,
+
+            // Download Dropdown
+            isDownloadMenuOpen,
+            downloadMenuRef,
+
+            // Language Dropdown
+            isLangMenuOpen,
+            langMenuRef,
+            currentLocale,
+            currentLocaleName,
+
+            t,
+
+            selectedFile,
+            rawMarkdownContent,
+            generatedHtmlContent,
+            hasUploadedFiles,
+            dropzoneTitleText,
+            copyButtonText,
+
+            changeLocale,
+            selectLocale,
+            toggleSidebarVisibility,
+            toggleDownloadMenu,
+            toggleLangMenu,
+            executeDownload,
+            formatFileByteSize,
+            handleFileInputChange,
+            removeFileFromStack,
+            clearAllUploadedFiles,
+            downloadAllFilesAsZip,
+            copyHtmlSourceToClipboard,
+            printHtmlPreview,
+            changeApplicationTheme,
+            isSourceCopied,
         };
     },
-}).mount('#app');
+})
+    .use(i18n)
+    .mount('#app');

@@ -1,0 +1,94 @@
+{
+    "common": {
+        "copy": "コピー",
+        "copied": "コピー完了"
+    },
+    "dropzone": {
+        "overlay": "ここにファイルをドロップ",
+        "fileSelect": "ファイル選択",
+        "selectFiles": "*.md ファイルを選択",
+        "filesLoaded": "{count} 個のファイル",
+        "dragDrop": "ドラッグ＆ドロップ",
+        "clearAll": "すべてクリア"
+    },
+    "sidebar": {
+        "upload": "アップロード",
+        "globalOptions": "グローバルオプション",
+        "stylesheet": "スタイルシート (CSS URL)",
+        "stylesheetPlaceholder": "デフォルトテーマ適用",
+        "actions": "アクション",
+        "downloadAll": "すべてダウンロード (ZIP)"
+    },
+    "header": {
+        "sidebarToggle": "サイドバー切り替え",
+        "noSelection": "未選択",
+        "downloadOptions": "ダウンロードオプション",
+        "download": "ダウンロード",
+        "printTitle": "ドキュメントを印刷",
+        "print": "印刷",
+        "copySourceTitle": "ソースコードをコピー",
+        "languageOptions": "言語を変更"
+    },
+    "status": {
+        "idle": "待機中...",
+        "converting": "変換中...",
+        "ready": "完了",
+        "error": "エラーが発生しました"
+    },
+    "fileList": {
+        "stack": "スタック",
+        "noFiles": "ファイルがありません",
+        "deleteTitle": "削除"
+    },
+    "tabs": {
+        "markdown": "マークダウン",
+        "preview": "プレビュー",
+        "html": "HTML"
+    },
+    "downloadMenu": {
+        "pdf": "PDFとしてダウンロード",
+        "webp": "WEBPとしてダウンロード",
+        "html": "HTMLとしてダウンロード"
+    },
+    "viewer": {
+        "noMarkdownTitle": "マークダウンなし",
+        "noMarkdownDesc": "ファイルを選択してマークダウンを表示します",
+        "noPreviewTitle": "プレビューなし",
+        "noPreviewDesc": "スタックからファイルを選択してください",
+        "noSourceTitle": "ソースなし",
+        "noSourceDesc": "ファイルを選択してHTMLソースを表示します"
+    },
+    "toast": {
+        "errorGenerateHtml": "{name} のHTML生成エラー",
+        "errorReadFile": "{name} の読み込みエラー",
+        "filesLoaded": "{count} 個のファイルを読み込みました",
+        "unsupportedFile": ".md ファイルのみサポートされています",
+        "workspaceCleared": "ワークスペースをクリアしました",
+        "fileDownloaded": "{name} をダウンロードしました",
+        "pdfLibMissing": "PDFレンダリングライブラリが見つかりません。",
+        "pdfStart": "PDF変換を開始しています...",
+        "pdfFail": "PDFの生成に失敗しました。",
+        "webpLibMissing": "画像レンダリングライブラリが見つかりません。",
+        "webpStart": "WEBP変換を開始しています...",
+        "webpFail": "WEBPの生成に失敗しました。",
+        "zipLibMissing": "JSZipライブラリが見つかりません。",
+        "zipStart": "ファイルを圧縮しています...",
+        "zipNoFiles": "圧縮するファイルがありません。",
+        "zipSuccess": "{count} 個のファイルをZIPでエクスポートしました",
+        "zipError": "ZIPエラー: {msg}",
+        "copied": "コピーしました",
+        "corsError": "サーバー環境でのみ他の言語を読み込むことができます。"
+    },
+    "footer": {
+        "copyright": "© MMR",
+        "poweredBy": "Powered by AURM"
+    },
+    "theme": {
+        "system": "システム",
+        "light": "ライト",
+        "dark": "ダーク"
+    },
+    "export": {
+        "defaultZipName": "monopress_export.zip"
+    }
+}
