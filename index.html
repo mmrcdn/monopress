@@ -65,12 +65,7 @@
                             <div class="dropzone-title">{{ dropzoneTitleText }}</div>
                             <div class="dropzone-subtitle">{{ t('dropzone.hint') }}</div>
                             <div class="dropzone-actions">
-                                <button
-                                    class="button-remove-all"
-                                    v-bind:title="t('dropzone.clear')"
-                                    v-on:click.prevent="clearAllUploadedFiles"
-                                    v-if="hasUploadedFiles"
-                                >
+                                <button class="button-remove-all" v-on:click.prevent="clearAllUploadedFiles" v-if="hasUploadedFiles">
                                     <svg viewBox="0 0 24 24">
                                         <line x1="18" y1="6" x2="6" y2="18" />
                                         <line x1="6" y1="6" x2="18" y2="18" />
@@ -114,7 +109,8 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'system' }"
                                 v-on:click="changeApplicationTheme('system')"
-                                v-bind:title="t('theme.system')"
+                                v-bind:data-tooltip="t('theme.system')"
+                                data-tooltip-pos="top"
                             >
                                 <svg viewBox="0 0 24 24">
                                     <rect x="2" y="3" width="20" height="14" rx="2" />
@@ -126,7 +122,8 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'light' }"
                                 v-on:click="changeApplicationTheme('light')"
-                                v-bind:title="t('theme.light')"
+                                v-bind:data-tooltip="t('theme.light')"
+                                data-tooltip-pos="top"
                             >
                                 <svg viewBox="0 0 24 24">
                                     <circle cx="12" cy="12" r="4" />
@@ -144,7 +141,8 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'dark' }"
                                 v-on:click="changeApplicationTheme('dark')"
-                                v-bind:title="t('theme.dark')"
+                                v-bind:data-tooltip="t('theme.dark')"
+                                data-tooltip-pos="top"
                             >
                                 <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
                             </button>
@@ -155,7 +153,12 @@
 
             <div class="main-content">
                 <div class="header-toolbar">
-                    <button class="button button-ghost button-small" v-on:click="toggleSidebarVisibility" v-bind:title="t('header.toggleSidebar')">
+                    <button
+                        class="button button-ghost button-small"
+                        v-on:click="toggleSidebarVisibility"
+                        v-bind:data-tooltip="t('header.toggleSidebar')"
+                        data-tooltip-pos="right"
+                    >
                         <svg viewBox="0 0 24 24" style="width: 16px; height: 16px">
                             <line x1="3" y1="12" x2="21" y2="12" />
                             <line x1="3" y1="6" x2="21" y2="6" />
@@ -165,7 +168,12 @@
                     <span class="header-filename">{{ selectedFile ? selectedFile.displayTitle : t('header.noFile') }}</span>
                     <div class="header-locales">
                         <div class="dropdown-wrapper" ref="langMenuRef">
-                            <button class="button button-ghost button-small" v-on:click="toggleLangMenu" v-bind:title="t('header.language')">
+                            <button
+                                class="button button-ghost button-small"
+                                v-on:click="toggleLangMenu"
+                                v-bind:data-tooltip="t('header.language')"
+                                data-tooltip-pos="bottom"
+                            >
                                 <svg viewBox="0 0 24 24">
                                     <circle cx="12" cy="12" r="10" />
                                     <line x1="2" y1="12" x2="22" y2="12" />
@@ -203,13 +211,18 @@
                             v-on:click="selectedFileId = fileItem.id"
                         >
                             <div class="file-item-info">
-                                <div class="file-item-name" v-bind:title="fileItem.displayTitle">{{ fileItem.displayTitle }}</div>
+                                <div class="file-item-name">{{ fileItem.displayTitle }}</div>
                                 <div class="file-item-meta">
                                     <div class="status-indicator" v-bind:class="'is-' + fileItem.conversionStatus"></div>
                                     {{ formatFileByteSize(fileItem.originalFile.size) }}
                                 </div>
                             </div>
-                            <button class="button-remove-item" v-on:click.stop="removeFileFromStack(fileItem.id)" v-bind:title="t('files.remove')">
+                            <button
+                                class="button-remove-item"
+                                v-on:click.stop="removeFileFromStack(fileItem.id)"
+                                v-bind:data-tooltip="t('files.remove')"
+                                data-tooltip-pos="left"
+                            >
                                 <svg viewBox="0 0 24 24">
                                     <line x1="18" y1="6" x2="6" y2="18" />
                                     <line x1="6" y1="6" x2="18" y2="18" />
@@ -254,7 +267,8 @@
                                         class="button button-ghost button-small"
                                         v-bind:disabled="!generatedHtmlContent"
                                         v-on:click="toggleDownloadMenu"
-                                        v-bind:title="t('header.downloadOptions')"
+                                        v-bind:data-tooltip="t('header.downloadOptions')"
+                                        data-tooltip-pos="bottom"
                                     >
                                         <svg viewBox="0 0 24 24">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -277,7 +291,8 @@
                                     class="button button-ghost button-small"
                                     v-bind:disabled="!generatedHtmlContent"
                                     v-on:click="printHtmlPreview"
-                                    v-bind:title="t('header.printTooltip')"
+                                    v-bind:data-tooltip="t('header.printTooltip')"
+                                    data-tooltip-pos="bottom"
                                 >
                                     <svg viewBox="0 0 24 24">
                                         <polyline points="6 9 6 2 18 2 18 9" />
@@ -290,7 +305,8 @@
                                     class="button button-ghost button-small"
                                     v-bind:disabled="!generatedHtmlContent"
                                     v-on:click="copyHtmlSourceToClipboard"
-                                    v-bind:title="t('header.copySource')"
+                                    v-bind:data-tooltip="t('header.copySource')"
+                                    data-tooltip-pos="bottom"
                                 >
                                     <svg viewBox="0 0 24 24" v-if="!isSourceCopied">
                                         <rect x="9" y="9" width="13" height="13" rx="2" />

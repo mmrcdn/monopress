@@ -1,6 +1,6 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1/dist/web/static/pretendard.min.css');
 
-/* ── Light theme ── */
+/* Light theme */
 :root {
     --font-body: 'Pretendard', 'Noto Sans KR', sans-serif;
 
@@ -47,7 +47,7 @@
     color-scheme: dark light;
 }
 
-/* ── Dark theme ── */
+/* Dark theme */
 :root[data-theme='dark'] {
     --bg: #101014;
     --sidebar-bg: #18181c;
@@ -72,7 +72,7 @@
     --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Reset & Global Transitions ── */
+/* Reset & Global Transitions */
 *,
 *::before,
 *::after {
@@ -107,7 +107,7 @@ body {
     text-rendering: optimizeLegibility !important;
 }
 
-/* ── App Layout ── */
+/* App Layout */
 .app-container {
     display: flex;
     width: 100vw;
@@ -137,7 +137,7 @@ body {
     font-weight: 600;
 }
 
-/* ── Sidebar ── */
+/* Sidebar */
 .app-sidebar {
     z-index: 10;
     display: flex;
@@ -234,7 +234,7 @@ body {
     user-select: none;
 }
 
-/* ── Dropzone Area ── */
+/* Dropzone Area */
 .file-dropzone {
     position: relative;
     padding: 20px 12px;
@@ -342,7 +342,7 @@ body {
     stroke-linecap: round;
 }
 
-/* ── Form Inputs ── */
+/* Form Inputs */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -375,7 +375,7 @@ body {
     box-shadow: 0 0 0 2px var(--primary-dim);
 }
 
-/* ── Buttons ── */
+/* Buttons */
 .button {
     display: inline-flex;
     flex-shrink: 0;
@@ -448,7 +448,7 @@ body {
     font-size: 0.75rem; /* 12px */
 }
 
-/* ── Footer & Theme Switcher ── */
+/* Footer & Theme Switcher */
 .sidebar-footer {
     flex-shrink: 0;
     padding: 16px;
@@ -495,7 +495,7 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
-/* ── Main Workspace ── */
+/* Main Workspace */
 .main-content {
     display: flex;
     flex: 1;
@@ -560,7 +560,7 @@ body {
     }
 }
 
-/* ── Workspace Panels ── */
+/* Workspace Panels */
 .workspace-wrapper {
     position: relative;
     display: flex;
@@ -607,15 +607,15 @@ body {
     border-bottom: 1px solid var(--border);
 }
 .file-list-empty {
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     padding: 24px 16px;
     font-size: 0.75rem; /* 12px */
     color: var(--text-3);
     text-align: center;
     user-select: none;
-    height: 100%;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
 }
 .file-item {
     position: relative;
@@ -741,8 +741,8 @@ body {
     flex-shrink: 0;
     width: 16px;
     height: 16px;
-    fill: none !important; /* 내부 색상 채움 방지 */
-    stroke: currentColor; /* 현재 텍스트 색상(var(--text-2) 또는 var(--primary))을 따름 */
+    fill: none !important;
+    stroke: currentColor;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -857,7 +857,7 @@ body {
     white-space: pre;
 }
 
-/* ── Toast Notification ── */
+/* Toast Notification */
 .toast-notification {
     position: fixed;
     right: 24px;
@@ -914,7 +914,7 @@ body {
     border-color: rgba(208, 48, 80, 0.25);
 }
 
-/* ── Dropdown Component ── */
+/* Dropdown Component */
 .dropdown-wrapper {
     position: relative;
     display: inline-block;
@@ -928,7 +928,6 @@ body {
 .dropdown-caret.is-open {
     transform: rotate(180deg);
 }
-/* 기존 .dropdown-menu 코드에 속성 추가 */
 .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -939,28 +938,24 @@ body {
     min-width: 160px;
     padding: 6px;
     margin-top: 6px;
+    pointer-events: none;
+    visibility: hidden;
     background-color: var(--panel-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
-    transform-origin: top right;
-
-    /* ── 애니메이션을 위해 추가된 부분 ── */
     opacity: 0;
-    visibility: hidden; /* display: none 대신 사용 */
-    pointer-events: none; /* 숨겨져 있을 때 클릭 방지 */
-    transform: scale(0.95) translateY(-4px);
     transition:
         opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
         transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
         visibility 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: scale(0.95) translateY(-4px);
+    transform-origin: top right;
 }
-
-/* 메뉴가 열렸을 때의 상태 */
 .dropdown-menu.is-open {
-    opacity: 1;
-    visibility: visible;
     pointer-events: auto;
+    visibility: visible;
+    opacity: 1;
     transform: scale(1) translateY(0);
 }
 .dropdown-item {
@@ -988,9 +983,7 @@ body {
     background-color: var(--border-light);
 }
 
-/* ── Locale Switcher ── */
-.locale-select-wrapper {
-}
+/* Locale Switcher */
 .locale-select {
     width: 100%;
     padding: 8px;
@@ -1018,6 +1011,123 @@ body {
 }
 [v-cloak] {
     display: none !important;
+}
+
+/* Custom CSS Tooltip (방향 제어 포함) */
+[data-tooltip] {
+    position: relative;
+}
+/* 툴팁 공통 스타일 & 트랜지션 */
+[data-tooltip]::before,
+[data-tooltip]::after {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+        opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        visibility 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+/* 툴팁 텍스트 박스 기본 설정 */
+[data-tooltip]::after {
+    padding: 6px 10px;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    color: var(--bg);
+    white-space: nowrap;
+    content: attr(data-tooltip);
+    background-color: var(--text-1);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+/* 툴팁 화살표 기본 설정 */
+[data-tooltip]::before {
+    content: '';
+    border: 4px solid transparent;
+}
+/* 마우스 오버 시 표시 */
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+/* 1. Top (기본값) */
+[data-tooltip]:not([data-tooltip-pos])::after,
+[data-tooltip-pos='top']::after {
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%, 4px);
+}
+[data-tooltip]:not([data-tooltip-pos])::before,
+[data-tooltip-pos='top']::before {
+    bottom: 100%;
+    left: 50%;
+    border-top-color: var(--text-1);
+    transform: translate(-50%, 8px);
+}
+[data-tooltip]:not([data-tooltip-pos]):hover::after,
+[data-tooltip-pos='top']:hover::after {
+    transform: translate(-50%, -6px);
+}
+[data-tooltip]:not([data-tooltip-pos]):hover::before,
+[data-tooltip-pos='top']:hover::before {
+    transform: translate(-50%, -2px);
+}
+/* 2. Bottom */
+[data-tooltip-pos='bottom']::after {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -4px);
+}
+[data-tooltip-pos='bottom']::before {
+    top: 100%;
+    left: 50%;
+    border-bottom-color: var(--text-1);
+    transform: translate(-50%, -8px);
+}
+[data-tooltip-pos='bottom']:hover::after {
+    transform: translate(-50%, 6px);
+}
+[data-tooltip-pos='bottom']:hover::before {
+    transform: translate(-50%, 2px);
+}
+/* 3. Left */
+[data-tooltip-pos='left']::after {
+    top: 50%;
+    right: 100%;
+    transform: translate(4px, -50%);
+}
+[data-tooltip-pos='left']::before {
+    top: 50%;
+    right: 100%;
+    border-left-color: var(--text-1);
+    transform: translate(8px, -50%);
+}
+[data-tooltip-pos='left']:hover::after {
+    transform: translate(-6px, -50%);
+}
+[data-tooltip-pos='left']:hover::before {
+    transform: translate(-2px, -50%);
+}
+/* 4. Right */
+[data-tooltip-pos='right']::after {
+    top: 50%;
+    left: 100%;
+    transform: translate(-4px, -50%);
+}
+[data-tooltip-pos='right']::before {
+    top: 50%;
+    left: 100%;
+    border-right-color: var(--text-1);
+    transform: translate(-8px, -50%);
+}
+[data-tooltip-pos='right']:hover::after {
+    transform: translate(6px, -50%);
+}
+[data-tooltip-pos='right']:hover::before {
+    transform: translate(2px, -50%);
 }
 
 @media (prefers-reduced-motion: reduce) {
