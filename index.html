@@ -7,6 +7,19 @@
         <title>Monopress</title>
         <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
         <link rel="manifest" href="./assets/site.webmanifest" />
+        <style type="text/css">
+            /* Prevent flash during initial render before Vue mount and before CSS is fully loaded */
+            body:has(> [v-cloak]) {
+                display: flex;
+                width: 100vw;
+                height: 100vh;
+                background-color: #101014;
+                overflow: hidden;
+            }
+            body:has(> [v-cloak]) > [v-cloak] {
+                visibility: hidden;
+            }
+        </style>
         <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css" />
         <link rel="stylesheet" href="./assets/ui.css" />
     </head>
