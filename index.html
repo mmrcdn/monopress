@@ -37,8 +37,9 @@
                                 type="file"
                                 accept=".md,text/markdown,text/plain"
                                 multiple
+                                title=""
                                 v-on:change="handleFileInputChange"
-                                v-bind:title="t('dropzone.browse')"
+                                v-tooltip:bottom="t('dropzone.browse')"
                             />
                             <div class="dropzone-icon">
                                 <i class="icon-upload" v-if="!hasUploadedFiles"></i>
@@ -84,8 +85,7 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'system' }"
                                 v-on:click="changeApplicationTheme('system')"
-                                v-bind:data-tooltip="t('theme.system')"
-                                data-tooltip-pos="top"
+                                v-tooltip:top="t('theme.system')"
                             >
                                 <i class="icon-monitor"></i>
                             </button>
@@ -93,8 +93,7 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'light' }"
                                 v-on:click="changeApplicationTheme('light')"
-                                v-bind:data-tooltip="t('theme.light')"
-                                data-tooltip-pos="top"
+                                v-tooltip:top="t('theme.light')"
                             >
                                 <i class="icon-sun"></i>
                             </button>
@@ -102,8 +101,7 @@
                                 class="theme-button"
                                 v-bind:class="{ 'is-active': currentTheme === 'dark' }"
                                 v-on:click="changeApplicationTheme('dark')"
-                                v-bind:data-tooltip="t('theme.dark')"
-                                data-tooltip-pos="top"
+                                v-tooltip:top="t('theme.dark')"
                             >
                                 <i class="icon-moon"></i>
                             </button>
@@ -114,23 +112,13 @@
 
             <div class="main-content">
                 <div class="header-toolbar">
-                    <button
-                        class="button button-ghost button-small"
-                        v-on:click="toggleSidebarVisibility"
-                        v-bind:data-tooltip="t('header.toggleSidebar')"
-                        data-tooltip-pos="right"
-                    >
+                    <button class="button button-ghost button-small" v-on:click="toggleSidebarVisibility" v-tooltip:bottom="t('header.toggleSidebar')">
                         <i class="icon-menu" style="font-size: 16px"></i>
                     </button>
                     <span class="header-filename">{{ selectedFile ? selectedFile.displayTitle : t('header.noFile') }}</span>
                     <div class="header-locales">
                         <div class="dropdown-wrapper" ref="langMenuRef">
-                            <button
-                                class="button button-ghost button-small"
-                                v-on:click="toggleLangMenu"
-                                v-bind:data-tooltip="t('header.language')"
-                                data-tooltip-pos="bottom"
-                            >
+                            <button class="button button-ghost button-small" v-on:click="toggleLangMenu" v-tooltip:bottom="t('header.language')">
                                 <i class="icon-globe"></i>
                                 <span>{{ currentLocaleName }}</span>
                                 <i class="icon-chevron-down dropdown-caret" v-bind:class="{ 'is-open': isLangMenuOpen }"></i>
@@ -158,8 +146,7 @@
                                 class="button button-remove-all"
                                 v-on:click.prevent="clearAllUploadedFiles"
                                 v-bind:disabled="!hasUploadedFiles"
-                                v-bind:data-tooltip="t('files.removeAll')"
-                                data-tooltip-pos="left"
+                                v-tooltip:bottom="t('files.removeAll')"
                             >
                                 <i class="icon-trash-2"></i>
                             </button>
@@ -179,12 +166,7 @@
                                     {{ formatFileByteSize(fileItem.originalFile.size) }}
                                 </div>
                             </div>
-                            <button
-                                class="button-remove-item"
-                                v-on:click.stop="removeFileFromStack(fileItem.id)"
-                                v-bind:data-tooltip="t('files.remove')"
-                                data-tooltip-pos="left"
-                            >
+                            <button class="button-remove-item" v-on:click.stop="removeFileFromStack(fileItem.id)" v-tooltip:bottom="t('files.remove')">
                                 <i class="icon-x"></i>
                             </button>
                         </div>
@@ -213,8 +195,7 @@
                                         class="button button-ghost button-small"
                                         v-bind:disabled="!generatedHtmlContent"
                                         v-on:click="toggleDownloadMenu"
-                                        v-bind:data-tooltip="t('header.downloadOptions')"
-                                        data-tooltip-pos="bottom"
+                                        v-tooltip:bottom="t('header.downloadOptions')"
                                     >
                                         <i class="icon-download"></i>
                                         <span>{{ t('header.download') }}</span>
@@ -230,8 +211,7 @@
                                     class="button button-ghost button-small"
                                     v-bind:disabled="!generatedHtmlContent"
                                     v-on:click="printHtmlPreview"
-                                    v-bind:data-tooltip="t('header.printTooltip')"
-                                    data-tooltip-pos="bottom"
+                                    v-tooltip:bottom="t('header.printTooltip')"
                                 >
                                     <i class="icon-printer"></i>
                                     <span>{{ t('header.print') }}</span>
@@ -240,8 +220,7 @@
                                     class="button button-ghost button-small"
                                     v-bind:disabled="!generatedHtmlContent"
                                     v-on:click="copyHtmlSourceToClipboard"
-                                    v-bind:data-tooltip="t('header.copySource')"
-                                    data-tooltip-pos="bottom"
+                                    v-tooltip:bottom="t('header.copySource')"
                                 >
                                     <i class="icon-copy" v-if="!isSourceCopied"></i>
                                     <i class="icon-check" v-else></i>
@@ -307,6 +286,8 @@
         <script src="https://cdn.jsdelivr.net/npm/lodash@4/lodash.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/html2canvas@1/dist/html2canvas.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0/dist/html2pdf.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
         <script src="./assets/langs/en.fallback.js"></script>
         <script src="./assets/ux.js"></script>
     </body>

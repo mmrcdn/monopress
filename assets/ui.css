@@ -312,119 +312,19 @@ i[class^='icon-'] {
     background-color: var(--border-light);
 }
 
-/* Custom CSS Tooltip */
-[data-tooltip] {
-    position: relative;
-}
-[data-tooltip]::before,
-[data-tooltip]::after {
-    position: absolute;
-    z-index: 1000;
-    pointer-events: none;
-    visibility: hidden;
-    opacity: 0;
-    transition:
-        opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        visibility 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-[data-tooltip]::after {
+/* Tippy.js Custom Theme (Monopress) */
+.tippy-box[data-theme~='monopress'] {
     padding: 6px 10px;
     font-size: 0.75rem; /* 12px */
     font-weight: 500;
     color: var(--bg);
-    white-space: nowrap;
-    content: attr(data-tooltip);
     background-color: var(--text-1);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-sm);
 }
-[data-tooltip]::before {
-    content: '';
-    border: 4px solid transparent;
-}
-[data-tooltip]:hover::before,
-[data-tooltip]:hover::after {
-    visibility: visible;
-    opacity: 1;
-}
 
-/* Tooltip Positions */
-/* 1. Top (Default) */
-[data-tooltip]:not([data-tooltip-pos])::after,
-[data-tooltip-pos='top']::after {
-    bottom: 100%;
-    left: 50%;
-    transform: translate(-50%, 4px);
-}
-[data-tooltip]:not([data-tooltip-pos])::before,
-[data-tooltip-pos='top']::before {
-    bottom: 100%;
-    left: 50%;
-    border-top-color: var(--text-1);
-    transform: translate(-50%, 8px);
-}
-[data-tooltip]:not([data-tooltip-pos]):hover::after,
-[data-tooltip-pos='top']:hover::after {
-    transform: translate(-50%, -6px);
-}
-[data-tooltip]:not([data-tooltip-pos]):hover::before,
-[data-tooltip-pos='top']:hover::before {
-    transform: translate(-50%, -2px);
-}
-/* 2. Bottom */
-[data-tooltip-pos='bottom']::after {
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, -4px);
-}
-[data-tooltip-pos='bottom']::before {
-    top: 100%;
-    left: 50%;
-    border-bottom-color: var(--text-1);
-    transform: translate(-50%, -8px);
-}
-[data-tooltip-pos='bottom']:hover::after {
-    transform: translate(-50%, 6px);
-}
-[data-tooltip-pos='bottom']:hover::before {
-    transform: translate(-50%, 2px);
-}
-/* 3. Left */
-[data-tooltip-pos='left']::after {
-    top: 50%;
-    right: 100%;
-    transform: translate(4px, -50%);
-}
-[data-tooltip-pos='left']::before {
-    top: 50%;
-    right: 100%;
-    border-left-color: var(--text-1);
-    transform: translate(8px, -50%);
-}
-[data-tooltip-pos='left']:hover::after {
-    transform: translate(-6px, -50%);
-}
-[data-tooltip-pos='left']:hover::before {
-    transform: translate(-2px, -50%);
-}
-/* 4. Right */
-[data-tooltip-pos='right']::after {
-    top: 50%;
-    left: 100%;
-    transform: translate(-4px, -50%);
-}
-[data-tooltip-pos='right']::before {
-    top: 50%;
-    left: 100%;
-    border-right-color: var(--text-1);
-    transform: translate(-8px, -50%);
-}
-[data-tooltip-pos='right']:hover::after {
-    transform: translate(6px, -50%);
-}
-[data-tooltip-pos='right']:hover::before {
-    transform: translate(2px, -50%);
+.tippy-box[data-theme~='monopress'] .tippy-content {
+    padding: 0;
 }
 
 /* Toast Notification */
@@ -559,7 +459,7 @@ i[class^='icon-'] {
     width: 24px;
     height: 24px;
     background-color: var(--primary-brand-bg);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 .brand-icon i[class^='icon-'] {
     font-size: 1.25rem;
@@ -569,6 +469,7 @@ i[class^='icon-'] {
     font-size: 0.875rem; /* 14px */
     font-weight: 600;
     color: var(--text-1);
+    text-transform: uppercase;
 }
 .brand-version {
     padding: 4px 8px;

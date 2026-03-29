@@ -1,9 +1,3 @@
-/**
- * @fileoverview Monopress application logic using Vue 3 Composition API.
- * Updated to match the new i18n schema.
- * @version 1.2.1
- */
-
 marked.setOptions({ gfm: true, breaks: false });
 
 const renderer = new marked.Renderer();
@@ -31,11 +25,11 @@ const i18n = createI18n({
     },
 });
 
-createApp({
+const app = createApp({
     setup() {
         const { t, locale, setLocaleMessage, availableLocales } = useI18n();
 
-        const VERSION = ref('1.2.2');
+        const VERSION = ref('1.2.3');
         const uploadedFiles = ref([]);
         const selectedFileId = ref(null);
         const isDragOverDropzone = ref(false);
@@ -434,6 +428,39 @@ createApp({
             },
         };
     },
-})
-    .use(i18n)
-    .mount('#app');
+});
+
+app.use(i18n);
+
+/**
+ * @description Vue directive to integrate Tippy.js for global tooltip handling.
+ * Appends tooltips to document.body to prevent clipping from parent overflow boundaries.
+ *
+ * @param {HTMLElement} el - The DOM element to attach the tooltip to.
+ * @param {import('vue').DirectiveBinding} binding - The directive binding value and argument (e.g. v-tooltip:bottom="text").
+ */
+app.directive('tooltip', {
+    mounted(el, binding) {
+        el._tippy = tippy(el, {
+            content: binding.value,
+            theme: 'monopress',
+            arrow: false,
+            animation: 'fade',
+            placement: binding.arg || 'bottom',
+            appendTo: () => document.body,
+            delay: [0, 0],
+        });
+    },
+    updated(el, binding) {
+        if (el._tippy && binding.value !== binding.oldValue) {
+            el._tippy.setContent(binding.value);
+        }
+    },
+    unmounted(el) {
+        if (el._tippy) {
+            el._tippy.destroy();
+        }
+    },
+});
+
+app.mount('#app');

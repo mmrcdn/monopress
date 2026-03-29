@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
   <br>
-  <a href="[https://mmrcdn.github.io/monopress/]"><strong>Launch Monopress in Browser</strong></a>
+  <a href="https://mmrcdn.github.io/monopress/"><strong>Launch Monopress in Browser</strong></a>
   <br><br>
 </div>
 
