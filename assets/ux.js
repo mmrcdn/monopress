@@ -198,15 +198,22 @@ const app = createApp({
             showToastNotification(t('toast.pdfStart'), 'info');
             try {
                 const iframeDocument = _.get(previewIframeRef.value, 'contentDocument');
-                const fileName = `${selectedFile.value.displayTitle}.pdf`;
                 const options = {
-                    margin: [10, 10, 10, 10],
+                    margin: [20, 20, 20, 20],
                     filename: fileName,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: currentTheme.value === 'dark' ? '#101014' : '#ffffff' },
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: {
+                        scale: 1.0,
+                        useCORS: true,
+                        allowTaint: true,
+                        windowWidth: iframeDocument.body.scrollWidth,
+                        windowHeight: iframeDocument.body.scrollHeight,
+                        backgroundColor: '#ffffff',
+                    },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 };
                 await html2pdf().set(options).from(iframeDocument.body).save();
+                const fileName = `${selectedFile.value.displayTitle}.pdf`;
                 showToastNotification(t('toast.downloaded', { name: fileName }), 'success');
             } catch (e) {
                 showToastNotification(t('toast.pdfFail'), 'error');
@@ -222,23 +229,25 @@ const app = createApp({
             showToastNotification(t('toast.webpStart'), 'info');
             try {
                 const iframeDocument = _.get(previewIframeRef.value, 'contentDocument');
-                const element = iframeDocument.documentElement;
-                const canvas = await html2canvas(element, {
-                    scale: 2,
+                const canvas = await html2canvas(iframeDocument.body, {
+                    scale: 1.0,
                     useCORS: true,
                     allowTaint: true,
-                    windowWidth: element.scrollWidth,
-                    windowHeight: element.scrollHeight,
-                    backgroundColor: currentTheme.value === 'dark' ? '#101014' : '#ffffff',
+                    windowWidth: iframeDocument.body.scrollWidth,
+                    windowHeight: iframeDocument.body.scrollHeight,
+                    backgroundColor: '#ffffff',
                 });
-                const dataUrl = canvas.toDataURL('image/webp', 0.95);
+                const blob = await new Promise((resolve, reject) => {
+                    canvas.toBlob((result) => (!result ? reject(new Error('Blob fail')) : resolve(result)), 'image/webp', 1);
+                });
+                const url = URL.createObjectURL(blob);
                 const fileName = `${selectedFile.value.displayTitle}.webp`;
                 const a = document.createElement('a');
-                a.href = dataUrl;
+                a.href = url;
                 a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
-                _.delay(() => document.body.removeChild(a), 100);
+                _.delay(() => void (document.body.removeChild(a), URL.revokeObjectURL(url)), 100);
                 showToastNotification(t('toast.downloaded', { name: fileName }), 'success');
             } catch (e) {
                 showToastNotification(t('toast.webpFail'), 'error');
