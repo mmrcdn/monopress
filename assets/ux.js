@@ -302,6 +302,7 @@ const app = createApp({
             if (availableLocales.includes(lang)) {
                 locale.value = lang;
                 currentLocale.value = lang;
+                localStorage.setItem(LOCAL_STORAGE_LANG_KEY, lang);
                 return;
             }
             try {
