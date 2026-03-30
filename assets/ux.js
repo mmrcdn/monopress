@@ -203,7 +203,7 @@ const app = createApp({
                     filename: fileName,
                     image: { type: 'jpeg', quality: 0.95 },
                     html2canvas: {
-                        scale: 1.2,
+                        scale: 1.5,
                         useCORS: true,
                         allowTaint: true,
                         windowWidth: iframeDocument.body.scrollWidth,
@@ -230,7 +230,7 @@ const app = createApp({
             try {
                 const iframeDocument = _.get(previewIframeRef.value, 'contentDocument');
                 const canvas = await html2canvas(iframeDocument.body, {
-                    scale: 1.2,
+                    scale: 1.5,
                     useCORS: true,
                     allowTaint: true,
                     windowWidth: iframeDocument.body.scrollWidth,
